@@ -1,72 +1,96 @@
-// ==================== CONFIGURAÇÃO SUPABASE ====================
+// ==================== CONFIG SUPABASE ====================
 const SUPABASE_URL = 'https://iaylyacrzurcjwvtecpu.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_pkzx4u5U9Xr407syiBE9yA_G7hUvGaw';
 
 const supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// Dados simulados como fallback
+// Dados atuais (fallback)
 let currentData = {
-  "deviceId": "HOSPITAL-01",
-  "temperature": 24.7,
-  "humidity": 51.2,
-  "co2": 730,
-  "pm25": 2.8,
-  "pm10": 6.0,
-  "signalStrength": -67,
-  "battery": 88,
-  "timestamp": new Date().toISOString()
+  temperature: 24.7,
+  humidity: 51.2,
+  co2: 730,
+  pm25: 2.8,
+  pm10: 6.0,
+  signalStrength: -67,
+  battery: 88
 };
 
-let history = []; // Para gráfico
-
-// ==================== REGRAS E THRESHOLDS ====================
 let thresholds = {};
 
-// Carregar regras do JSON
+// ==================== CARREGAR REGRAS ====================
 async function loadRules() {
   try {
     const res = await fetch('rules.json');
     return await res.json();
   } catch (e) {
-    console.warn("Não encontrou rules.json, usando defaults");
-    return { thresholds: {} };
+    console.warn("rules.json não encontrado, usando padrão");
+    return { scenarios: [] };
   }
 }
 
-// Função para status
-function getStatus(value, param) {
-  const t = thresholds[param] || {};
-  if (param === 'temperature' || param === 'humidity') {
-    if (value > (t.critical_max || 30) || value < (t.critical_min || 18)) return { color: 'red', label: 'Crítico' };
-    if (value > (t.attention_max || 26) || value < (t.attention_min || 20)) return { color: 'amber', label: 'Atenção' };
-  } else if (param === 'co2') {
-    if (value > 1500) return { color: 'red', label: 'Crítico' };
-    if (value > 1000) return { color: 'amber', label: 'Atenção' };
-  } else if (param === 'pm25') {
-    if (value > 25) return { color: 'red', label: 'Crítico' };
-    if (value > 10) return { color: 'amber', label: 'Atenção' };
-  }
-  return { color: 'emerald', label: 'Bom' };
-}
-
-// Função principal
+// ==================== RENDERIZAÇÃO ====================
 async function renderDashboard() {
   const rules = await loadRules();
-  thresholds = rules.thresholds || {};
 
-  // Atualiza cards (exemplo)
-  document.getElementById('temp-value').textContent = currentData.temperature.toFixed(1) + '°C';
-  document.getElementById('humidity-value').textContent = currentData.humidity.toFixed(0) + '%';
-  document.getElementById('co2-value').textContent = Math.round(currentData.co2);
+  // Atualiza cards
+  document.getElementById('measurements').innerHTML = `
+    <div class="bg-gray-900 rounded-3xl p-6 card">
+      <div class="flex items-center gap-3 text-emerald-400 mb-2">
+        <i class="fas fa-thermometer-half text-3xl"></i>
+        <div><div class="text-4xl font-bold">${currentData.temperature.toFixed(1)}°C</div><div class="text-sm text-gray-400">Temperatura</div></div>
+      </div>
+    </div>
+    <div class="bg-gray-900 rounded-3xl p-6 card">
+      <div class="flex items-center gap-3 text-sky-400 mb-2">
+        <i class="fas fa-droplet text-3xl"></i>
+        <div><div class="text-4xl font-bold">${currentData.humidity.toFixed(0)}%</div><div class="text-sm text-gray-400">Umidade</div></div>
+      </div>
+    </div>
+    <div class="bg-gray-900 rounded-3xl p-6 card">
+      <div class="flex items-center gap-3 text-violet-400 mb-2">
+        <i class="fas fa-wind text-3xl"></i>
+        <div><div class="text-4xl font-bold">${Math.round(currentData.co2)}</div><div class="text-sm text-gray-400">CO₂ ppm</div></div>
+      </div>
+    </div>
+    <div class="bg-gray-900 rounded-3xl p-6 card">
+      <div class="flex items-center gap-3 text-rose-400 mb-2">
+        <i class="fas fa-dust text-3xl"></i>
+        <div><div class="text-4xl font-bold">${currentData.pm25.toFixed(1)}</div><div class="text-sm text-gray-400">PM2.5</div></div>
+      </div>
+    </div>
+  `;
 
-  // Detectar anomalias (lógica existente)
-  console.log("✅ Dashboard atualizado com dados:", currentData);
+  console.log("✅ Dashboard renderizado");
 }
 
-// Carregar ao iniciar
+// ==================== BUSCAR DADOS DO SUPABASE ====================
+async function fetchLatestReading() {
+  try {
+    const { data, error } = await supabase
+      .from('sensor_readings')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .single();
+
+    if (error) throw error;
+
+    if (data) {
+      currentData = { ...currentData, ...data };
+      console.log("✅ Dados do Supabase:", currentData);
+      renderDashboard();
+    }
+  } catch (err) {
+    console.warn("Usando dados simulados (tabela vazia ou erro):", err.message);
+    renderDashboard();
+  }
+}
+
+// Inicialização
 document.addEventListener('DOMContentLoaded', () => {
   renderDashboard();
+  fetchLatestReading();
   
-  // Atualizar a cada 30 segundos
-  setInterval(renderDashboard, 30000);
+  // Atualiza a cada 15 segundos
+  setInterval(fetchLatestReading, 15000);
 });
