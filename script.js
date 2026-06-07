@@ -1,4 +1,21 @@
-// Dados simulados (substitua por Firebase mais tarde)
+// ==================== SUPABASE CONFIG ====================
+import { SUPABASE_URL, SUPABASE_ANON_KEY } from './supabase-config.js';
+
+const supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// Dados simulados como fallback
+let currentData = {
+  "deviceId": "HOSPITAL-01",
+  "temperature": 24.7,
+  "humidity": 51.2,
+  "co2": 730,
+  "pm25": 2.8,
+  "pm10": 6.0,
+  "signalStrength": -67,
+  "battery": 88,
+  "timestamp": new Date().toISOString()
+};
+
 let currentData = {
   "deviceId": "HOSPITAL-01",
   "temperature": 29.15,
@@ -204,15 +221,45 @@ function sendTelegramAlert() {
   alert("✅ Alerta enviado para o Telegram! (Integração real via backend)");
 }
 
-// Inicializar
+// ==================== FUNÇÕES SUPABASE ====================
+
+// Buscar última medição do banco
+async function fetchLatestReading() {
+  try {
+    const { data, error } = await supabase
+      .from('sensor_readings')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .single();
+
+    if (error) {
+      console.warn('Supabase error (usando dados simulados):', error.message);
+      return;
+    }
+
+    if (data) {
+      currentData = { ...currentData, ...data };
+      console.log('✅ Dados atualizados do Supabase:', currentData);
+      renderDashboard();
+    }
+  } catch (err) {
+    console.error('Erro ao conectar com Supabase:', err);
+  }
+}
+
+// Atualização automática
+function startRealTimeUpdates() {
+  fetchLatestReading(); // primeira carga
+
+  setInterval(() => {
+    fetchLatestReading();
+  }, 15000); // a cada 15 segundos
+}
+
+// ==================== INICIALIZAÇÃO ====================
 window.onload = () => {
   renderDashboard();
   initChart();
-
-  // Simular atualização a cada 30 segundos
-  setInterval(() => {
-    currentData.temperature = 28.8 + Math.random() * 2;
-    currentData.humidity = 64 + Math.random() * 6;
-    renderDashboard();
-  }, 30000);
+  startRealTimeUpdates();
 };
