@@ -1,5 +1,8 @@
+
 // ==================== SUPABASE CONFIG ====================
-import { SUPABASE_URL, SUPABASE_ANON_KEY } from './supabase-config.js';
+// Configuração direta (sem import)
+const SUPABASE_URL = 'https://iaylyacrzurcjwvtecpu.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_pkzx4u5U9Xr407syiBE9yA_G7hUvGaw';
 
 const supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
