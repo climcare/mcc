@@ -1,0 +1,56 @@
+{
+  "thresholds": {
+    "temperature": { "ideal_min": 21, "ideal_max": 24, "attention_min": 18, "attention_max": 26, "critical_min": 15, "critical_max": 28 },
+    "humidity": { "ideal_min": 40, "ideal_max": 60, "attention_min": 35, "attention_max": 65, "critical_min": 30, "critical_max": 70 },
+    "co2": { "ideal": 800, "attention": 1000, "critical": 1500 },
+    "pm25": { "ideal": 10, "attention": 25, "critical": 50 },
+    "pm10": { "ideal": 20, "attention": 50, "critical": 100 }
+  },
+  "scenarios": [
+    {
+      "id": "abafado",
+      "name": "Condições Abafadas",
+      "condition": "temp_high && humidity_high",
+      "severity": "high",
+      "diagnosis": "Ambiente quente e úmido. Reduz conforto, aumenta fadiga e risco respiratório.",
+      "causes": ["Baixa ventilação", "Alta ocupação", "Ar-condicionado mal regulado"],
+      "mitigation": ["Aumentar ventilação natural", "Ligar desumidificador", "Ajustar temperatura do AC para 23-24°C"]
+    },
+    {
+      "id": "mofo",
+      "name": "Risco de Mofo e Condensação",
+      "condition": "temp_low && humidity_high",
+      "severity": "high",
+      "diagnosis": "Temperatura e umidade abaixo/fora da faixa aceitável OMS. Risco elevado de condensação, proliferação de fungos e bactérias.",
+      "causes": ["Resfriamento excessivo", "Vazamentos", "Falta de isolamento"],
+      "mitigation": ["Acionar aquecimento", "Fechar portas e janelas", "Reduzir resfriamento do ar-condicionado", "Verificar umidade em paredes"]
+    },
+    {
+      "id": "ar_seco",
+      "name": "Ar Seco e Irritante",
+      "condition": "temp_high && humidity_low",
+      "severity": "medium",
+      "diagnosis": "Ar seco pode causar irritação nas vias respiratórias e pele.",
+      "causes": ["Aquecimento excessivo", "Clima seco externo"],
+      "mitigation": ["Usar umidificador", "Evitar aquecimento excessivo"]
+    },
+    {
+      "id": "ventilacao_pobre",
+      "name": "Ventilação Insuficiente",
+      "condition": "co2_high",
+      "severity": "high",
+      "diagnosis": "Acúmulo de CO₂ indica ventilação inadequada. Pode reduzir cognição e aumentar transmissão de doenças.",
+      "causes": ["Janelas fechadas", "Filtro de ar sujo", "Alta densidade de pessoas"],
+      "mitigation": ["Abrir janelas (cruzadas se possível)", "Ligar exaustor ou HVAC em modo fresco", "Reduzir número de ocupantes temporariamente"]
+    },
+    {
+      "id": "particulas",
+      "name": "Poluição por Partículas",
+      "condition": "pm_high",
+      "severity": "medium",
+      "diagnosis": "Níveis elevados de PM2.5/PM10. Risco para sistema respiratório.",
+      "causes": ["Atividades internas (limpeza, cozinha)", "Infiltração externa", "Filtros sujos"],
+      "mitigation": ["Ligar purificador de ar HEPA", "Evitar atividades geradoras", "Trocar/limpar filtros"]
+    }
+  ]
+}
