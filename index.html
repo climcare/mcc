@@ -25,49 +25,72 @@
 </head>
 
 <body>
+<body>
 
     <div class="max-w-7xl mx-auto p-6">
 
-        <div class="flex flex-col lg:flex-row lg:justify-between lg:items-center mb-8">
+        <!-- HEADER -->
+        <div class="flex flex-col lg:flex-row lg:justify-between lg:items-center mb-6">
 
-    <div>
-        <h1 class="text-5xl font-bold mb-2">
-           MCC
-        </h1>
+            <div>
+                <h1 class="text-5xl font-bold mb-2">
+                    MCC
+                </h1>
 
-        <p class="text-slate-400">
-            Plataforma Inteligente de Qualidade Ambiental Interna
-        </p>
-    </div>
+                <p class="text-slate-400">
+                    Plataforma Inteligente de Qualidade Ambiental Interna
+                </p>
+            </div>
 
-    <div id="deviceInfo"
-         class="card mt-4 lg:mt-0 min-w-[280px]">
-    </div>
+            <div id="deviceInfo"
+                class="card mt-4 lg:mt-0 min-w-[280px]">
+            </div>
 
-</div>
-        <!-- CARDS -->
-        <div id="cards"
-            class="grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4 mb-8">
-        </div>
-        <div id="scoreCard"
-     class="card mb-8 text-center">
-        </div>
-        
-        <!-- STATUS -->
-        <div id="statusCard"
-            class="card mb-8">
-        </div>
-        <div id="environmentStatus"
-         class="card mb-8">
-        </div>
-        <!-- ALERTAS -->
-        <div id="alertsCard"
-            class="card mb-8">
         </div>
 
-        <!-- MITIGAÇÕES -->
-        <div id="mitigationCard"
-            class="card">
+        <!-- TOPO -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+
+            <!-- SCORE -->
+            <div id="scoreCard"
+                class="card">
+            </div>
+
+            <!-- MÉTRICAS -->
+            <div id="cards"
+                class="lg:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4">
+            </div>
+
+        </div>
+
+        <!-- CENTRO -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+
+            <!-- SEMÁFORO -->
+            <div id="environmentStatus"
+                class="card">
+            </div>
+
+            <!-- DIAGNÓSTICO -->
+            <div id="statusCard"
+                class="card">
+            </div>
+
+        </div>
+
+        <!-- BASE -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+
+            <!-- ALERTAS -->
+            <div id="alertsCard"
+                class="card">
+            </div>
+
+            <!-- MITIGAÇÕES -->
+            <div id="mitigationCard"
+                class="card">
+            </div>
+
         </div>
 
     </div>
@@ -75,5 +98,7 @@
     <script src="analysis.js"></script>
     <script src="script.js"></script>
 
+</body>
+    
 </body>
 </html>
