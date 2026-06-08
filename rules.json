@@ -1,0 +1,13 @@
+{
+  "temperature": {
+    "ideal_min": 21,
+    "ideal_max": 24
+  },
+  "humidity": {
+    "ideal_min": 40,
+    "ideal_max": 60
+  },
+  "co2": {
+    "ideal_max": 800
+  }
+}
