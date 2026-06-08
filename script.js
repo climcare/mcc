@@ -1,4 +1,4 @@
-// ==================== CONFIGURAÇÃO ====================
+// ==================== CONFIGURAÇÃO SUPABASE ====================
 const SUPABASE_URL = 'https://iaylyacrzurcjwvtecpu.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_pkzx4u5U9Xr407syiBE9yA_G7hUvGaw';
 
@@ -13,22 +13,22 @@ let currentData = {
   signalStrength: -67
 };
 
-// ==================== CARREGAR REGRAS DO JSON ====================
+// ==================== CARREGAR REGRAS ====================
 let rulesData = { scenarios: [] };
 
 async function loadRules() {
   try {
     const res = await fetch('rules.json');
     rulesData = await res.json();
-    console.log("✅ Regras carregadas do rules.json");
+    console.log("✅ Regras carregadas");
   } catch (e) {
-    console.warn("Não encontrou rules.json");
+    console.warn("rules.json não encontrado");
   }
 }
 
 // ==================== RENDERIZAÇÃO ====================
 function renderDashboard() {
-  // Cards
+  // Cards de Medição
   document.getElementById('measurements').innerHTML = `
     <div class="bg-gray-900 rounded-3xl p-6 card">
       <div class="flex items-center gap-3 text-emerald-400 mb-2">
@@ -56,57 +56,50 @@ function renderDashboard() {
     </div>
   `;
 
-  // Alertas usando rules.json (melhor usar scenarios)
+  // Alertas
   let alertsHTML = '';
-  rulesData.scenarios.forEach(scenario => {
-    // Lógica simples por enquanto (pode ser expandida)
-    if (scenario.id === "abafado" && currentData.temperature > 26 && currentData.humidity > 60) {
-      alertsHTML += createAlertHTML(scenario);
-    }
-    if (scenario.id === "mofo" && currentData.humidity > 65 && currentData.temperature < 22) {
-      alertsHTML += createAlertHTML(scenario);
-    }
-    if (scenario.id === "ventilacao_pobre" && currentData.co2 > 1000) {
-      alertsHTML += createAlertHTML(scenario);
-    }
-    if (scenario.id === "particulas" && currentData.pm25 > 25) {
-      alertsHTML += createAlertHTML(scenario);
-    }
-  });
+  if (rulesData.scenarios) {
+    rulesData.scenarios.forEach(sc => {
+      let trigger = false;
+      if (sc.id === "abafado" && currentData.temperature > 26 && currentData.humidity > 60) trigger = true;
+      if (sc.id === "mofo" && currentData.humidity > 65 && currentData.temperature < 22) trigger = true;
+      if (sc.id === "ventilacao_pobre" && currentData.co2 > 1000) trigger = true;
+      if (sc.id === "particulas" && currentData.pm25 > 25) trigger = true;
+
+      if (trigger) {
+        alertsHTML += `
+          <div class="bg-gray-800 border-l-4 border-red-500 p-5 rounded-2xl">
+            <h3 class="font-bold">${sc.name}</h3>
+            <p class="text-gray-300 mt-2">${sc.diagnosis}</p>
+            <p class="mt-3 text-emerald-400"><strong>Mitigação:</strong> ${sc.mitigation.join(" • ")}</p>
+          </div>`;
+      }
+    });
+  }
 
   if (!alertsHTML) {
-    alertsHTML = `<div class="bg-emerald-900/30 p-6 rounded-3xl text-center text-emerald-400">✅ Todas as condições estão dentro da faixa aceitável (OMS/Anvisa).</div>`;
+    alertsHTML = `<div class="bg-emerald-900/30 p-6 rounded-3xl text-center text-emerald-400 text-lg">✅ Todas as condições estão dentro da faixa aceitável (OMS/Anvisa).</div>`;
   }
 
   document.getElementById('alerts-container').innerHTML = alertsHTML;
 }
 
-function createAlertHTML(scenario) {
-  return `
-    <div class="bg-gray-800 border-l-4 border-red-500 p-5 rounded-2xl">
-      <h3 class="font-bold text-lg">${scenario.name}</h3>
-      <p class="text-gray-300 mt-2">${scenario.diagnosis}</p>
-      <p class="text-emerald-400 mt-4"><strong>Mitigação:</strong> ${scenario.mitigation.join(" • ")}</p>
-    </div>
-  `;
-}
-
 // ==================== INICIALIZAÇÃO ====================
 async function initDashboard() {
   console.log("🚀 Iniciando Dashboard...");
-  
+
   await loadRules();
 
-  // Supabase
+  // Inicializa Supabase
   if (typeof Supabase !== "undefined") {
     supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    console.log("✅ Supabase carregado");
+    console.log("✅ Supabase carregado com sucesso");
   } else {
-    console.warn("⚠️ Supabase não carregou - modo simulado");
+    console.warn("⚠️ Supabase não carregou - usando modo simulado");
   }
 
   renderDashboard();
-  setInterval(renderDashboard, 8000);
+  setInterval(renderDashboard, 10000); // atualiza a cada 10s
 }
 
 window.onload = initDashboard;
