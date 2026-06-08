@@ -1,8 +1,8 @@
-// ==================== CONFIGURAÇÃO SUPABASE ====================
+// ==================== CONFIGURAÇÃO ====================
 const SUPABASE_URL = 'https://iaylyacrzurcjwvtecpu.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_pkzx4u5U9Xr407syiBE9yA_G7hUvGaw';
 
-let supabase = null;
+let supabaseClient = null;   // ← Mudamos o nome para evitar conflito
 let currentData = {
   temperature: 24.7,
   humidity: 51.2,
@@ -13,22 +13,22 @@ let currentData = {
   signalStrength: -67
 };
 
-// ==================== CARREGAR REGRAS ====================
 let rulesData = { scenarios: [] };
 
+// Carregar regras
 async function loadRules() {
   try {
     const res = await fetch('rules.json');
     rulesData = await res.json();
-    console.log("✅ Regras carregadas");
+    console.log("✅ Regras carregadas do rules.json");
   } catch (e) {
-    console.warn("rules.json não encontrado");
+    console.warn("⚠️ rules.json não encontrado");
   }
 }
 
-// ==================== RENDERIZAÇÃO ====================
+// Renderizar Dashboard
 function renderDashboard() {
-  // Cards de Medição
+  // === CARDS ===
   document.getElementById('measurements').innerHTML = `
     <div class="bg-gray-900 rounded-3xl p-6 card">
       <div class="flex items-center gap-3 text-emerald-400 mb-2">
@@ -39,67 +39,4 @@ function renderDashboard() {
     <div class="bg-gray-900 rounded-3xl p-6 card">
       <div class="flex items-center gap-3 text-sky-400 mb-2">
         <i class="fas fa-droplet text-3xl"></i>
-        <div><div class="text-4xl font-bold">${currentData.humidity.toFixed(0)}%</div><div class="text-sm text-gray-400">Umidade</div></div>
-      </div>
-    </div>
-    <div class="bg-gray-900 rounded-3xl p-6 card">
-      <div class="flex items-center gap-3 text-violet-400 mb-2">
-        <i class="fas fa-wind text-3xl"></i>
-        <div><div class="text-4xl font-bold">${Math.round(currentData.co2)}</div><div class="text-sm text-gray-400">CO₂ ppm</div></div>
-      </div>
-    </div>
-    <div class="bg-gray-900 rounded-3xl p-6 card">
-      <div class="flex items-center gap-3 text-rose-400 mb-2">
-        <i class="fas fa-dust text-3xl"></i>
-        <div><div class="text-4xl font-bold">${currentData.pm25.toFixed(1)}</div><div class="text-sm text-gray-400">PM2.5 µg/m³</div></div>
-      </div>
-    </div>
-  `;
-
-  // Alertas
-  let alertsHTML = '';
-  if (rulesData.scenarios) {
-    rulesData.scenarios.forEach(sc => {
-      let trigger = false;
-      if (sc.id === "abafado" && currentData.temperature > 26 && currentData.humidity > 60) trigger = true;
-      if (sc.id === "mofo" && currentData.humidity > 65 && currentData.temperature < 22) trigger = true;
-      if (sc.id === "ventilacao_pobre" && currentData.co2 > 1000) trigger = true;
-      if (sc.id === "particulas" && currentData.pm25 > 25) trigger = true;
-
-      if (trigger) {
-        alertsHTML += `
-          <div class="bg-gray-800 border-l-4 border-red-500 p-5 rounded-2xl">
-            <h3 class="font-bold">${sc.name}</h3>
-            <p class="text-gray-300 mt-2">${sc.diagnosis}</p>
-            <p class="mt-3 text-emerald-400"><strong>Mitigação:</strong> ${sc.mitigation.join(" • ")}</p>
-          </div>`;
-      }
-    });
-  }
-
-  if (!alertsHTML) {
-    alertsHTML = `<div class="bg-emerald-900/30 p-6 rounded-3xl text-center text-emerald-400 text-lg">✅ Todas as condições estão dentro da faixa aceitável (OMS/Anvisa).</div>`;
-  }
-
-  document.getElementById('alerts-container').innerHTML = alertsHTML;
-}
-
-// ==================== INICIALIZAÇÃO ====================
-async function initDashboard() {
-  console.log("🚀 Iniciando Dashboard...");
-
-  await loadRules();
-
-  // Inicializa Supabase
-  if (typeof Supabase !== "undefined") {
-    supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    console.log("✅ Supabase carregado com sucesso");
-  } else {
-    console.warn("⚠️ Supabase não carregou - usando modo simulado");
-  }
-
-  renderDashboard();
-  setInterval(renderDashboard, 10000); // atualiza a cada 10s
-}
-
-window.onload = initDashboard;
+        <div><div class="text-4xl font-bold">${currentData.humidity.toFixed(0)}%</div><div class="
