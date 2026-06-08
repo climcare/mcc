@@ -1,8 +1,8 @@
-// ==================== CONFIG SUPABASE ====================
+// ==================== SUPABASE CONFIG ====================
 const SUPABASE_URL = 'https://iaylyacrzurcjwvtecpu.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_pkzx4u5U9Xr407syiBE9yA_G7hUvGaw';
 
-const supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const supabase = window.Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // Dados atuais (fallback)
 let currentData = {
@@ -15,23 +15,8 @@ let currentData = {
   battery: 88
 };
 
-let thresholds = {};
-
-// ==================== CARREGAR REGRAS ====================
-async function loadRules() {
-  try {
-    const res = await fetch('rules.json');
-    return await res.json();
-  } catch (e) {
-    console.warn("rules.json não encontrado, usando padrão");
-    return { scenarios: [] };
-  }
-}
-
 // ==================== RENDERIZAÇÃO ====================
-async function renderDashboard() {
-  const rules = await loadRules();
-
+function renderDashboard() {
   // Atualiza cards
   document.getElementById('measurements').innerHTML = `
     <div class="bg-gray-900 rounded-3xl p-6 card">
@@ -55,15 +40,15 @@ async function renderDashboard() {
     <div class="bg-gray-900 rounded-3xl p-6 card">
       <div class="flex items-center gap-3 text-rose-400 mb-2">
         <i class="fas fa-dust text-3xl"></i>
-        <div><div class="text-4xl font-bold">${currentData.pm25.toFixed(1)}</div><div class="text-sm text-gray-400">PM2.5</div></div>
+        <div><div class="text-4xl font-bold">${currentData.pm25.toFixed(1)}</div><div class="text-sm text-gray-400">PM2.5 µg/m³</div></div>
       </div>
     </div>
   `;
 
-  console.log("✅ Dashboard renderizado");
+  console.log("✅ Dashboard renderizado com dados:", currentData);
 }
 
-// ==================== BUSCAR DADOS DO SUPABASE ====================
+// ==================== BUSCAR DADOS ====================
 async function fetchLatestReading() {
   try {
     const { data, error } = await supabase
@@ -77,20 +62,17 @@ async function fetchLatestReading() {
 
     if (data) {
       currentData = { ...currentData, ...data };
-      console.log("✅ Dados do Supabase:", currentData);
-      renderDashboard();
+      console.log("📡 Dados reais do Supabase carregados");
     }
   } catch (err) {
-    console.warn("Usando dados simulados (tabela vazia ou erro):", err.message);
-    renderDashboard();
+    console.warn("Usando dados simulados:", err.message);
   }
+  renderDashboard();
 }
 
 // Inicialização
 document.addEventListener('DOMContentLoaded', () => {
   renderDashboard();
   fetchLatestReading();
-  
-  // Atualiza a cada 15 segundos
-  setInterval(fetchLatestReading, 15000);
+  setInterval(fetchLatestReading, 15000); // Atualiza a cada 15s
 });
