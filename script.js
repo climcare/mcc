@@ -59,7 +59,7 @@ async function loadLatestReading() {
     </h2>
 
     <div
-         style="
+          style="
             width:140px;
             height:140px;
             border-radius:50%;
