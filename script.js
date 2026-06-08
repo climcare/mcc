@@ -136,6 +136,52 @@ async function loadLatestReading() {
             ).join('')}
         </ul>
     `;
+    function getIndicator(ok) {
+    return ok ? "🟢" : "🟡";
+}
+
+const tempOk =
+    reading.temperature >= 21 &&
+    reading.temperature <= 24;
+
+const humidityOk =
+    reading.humidity >= 40 &&
+    reading.humidity <= 60;
+
+document.getElementById('environmentStatus').innerHTML = `
+    <h2 class="text-2xl font-bold mb-4">
+        Semáforo Ambiental
+    </h2>
+
+    <div class="space-y-3">
+
+        <div class="flex justify-between">
+            <span>Temperatura</span>
+            <span>${getIndicator(tempOk)}</span>
+        </div>
+
+        <div class="flex justify-between">
+            <span>Umidade</span>
+            <span>${getIndicator(humidityOk)}</span>
+        </div>
+
+        <div class="flex justify-between">
+            <span>CO₂</span>
+            <span>⚪</span>
+        </div>
+
+        <div class="flex justify-between">
+            <span>PM2.5</span>
+            <span>⚪</span>
+        </div>
+
+        <div class="flex justify-between">
+            <span>PM10</span>
+            <span>⚪</span>
+        </div>
+
+    </div>
+`;
 }
 
 loadLatestReading();
