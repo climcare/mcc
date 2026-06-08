@@ -2,7 +2,7 @@
 const SUPABASE_URL = 'https://iaylyacrzurcjwvtecpu.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_pkzx4u5U9Xr407syiBE9yA_G7hUvGaw';
 
-let supabaseClient = null;
+let supabase = null;
 let currentData = {
   temperature: 24.7,
   humidity: 51.2,
@@ -13,26 +13,27 @@ let currentData = {
   signalStrength: -67
 };
 
-function initDashboard() {
-  console.log("🚀 Iniciando Dashboard...");
+// ==================== INICIALIZAÇÃO ====================
+console.log("🚀 Iniciando Dashboard...");
 
+function initDashboard() {
+  // Tenta inicializar Supabase
   if (typeof Supabase !== "undefined") {
-    supabaseClient = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    console.log("✅ Supabase criado com sucesso!");
+    supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    console.log("✅ Supabase carregado com sucesso!");
   } else {
     console.warn("⚠️ Supabase não carregou. Modo simulado ativo.");
   }
 
   renderDashboard();
   fetchLatestReading();
-  setInterval(fetchLatestReading, 15000);
+
+  // Atualiza a cada 10 segundos
+  setInterval(fetchLatestReading, 10000);
 }
 
 function renderDashboard() {
-  const container = document.getElementById('measurements');
-  if (!container) return;
-
-  container.innerHTML = `
+  document.getElementById('measurements').innerHTML = `
     <div class="bg-gray-900 rounded-3xl p-6 card">
       <div class="flex items-center gap-3 text-emerald-400 mb-2">
         <i class="fas fa-thermometer-half text-3xl"></i>
@@ -60,14 +61,16 @@ function renderDashboard() {
   `;
 }
 
+// Buscar último registro
 async function fetchLatestReading() {
-  if (!supabaseClient) {
+  if (!supabase) {
+    console.log("🔄 Usando dados simulados (Supabase não disponível)");
     renderDashboard();
     return;
   }
 
   try {
-    const { data, error } = await supabaseClient
+    const { data, error } = await supabase
       .from('sensor_readings')
       .select('*')
       .order('created_at', { ascending: false })
@@ -75,15 +78,16 @@ async function fetchLatestReading() {
       .single();
 
     if (error) throw error;
+
     if (data) {
       currentData = { ...currentData, ...data };
-      console.log("📡 Dados reais carregados do Supabase");
+      console.log("📡 Dados reais do Supabase:", currentData);
     }
   } catch (e) {
-    console.warn("Usando dados simulados:", e.message);
+    console.warn("Tabela vazia ou erro:", e.message);
   }
   renderDashboard();
 }
 
-// Iniciar
-document.addEventListener('DOMContentLoaded', initDashboard);
+// Iniciar quando a página carregar
+window.onload = initDashboard;
