@@ -26,7 +26,24 @@ async function loadLatestReading() {
     }
 
     const reading = data[0];
+    document.getElementById('deviceInfo').innerHTML = `
+    <div class="flex items-center gap-2 mb-2">
+        <div class="w-3 h-3 rounded-full bg-green-500"></div>
+        <span class="font-semibold">ONLINE</span>
+    </div>
 
+    <div class="text-sm text-slate-300">
+        Dispositivo:
+        <strong>${reading.deviceId}</strong>
+    </div>
+
+    <div class="text-sm text-slate-300">
+        Última atualização:
+        <strong>
+            ${new Date(reading.created_at).toLocaleTimeString('pt-BR')}
+        </strong>
+    </div>
+`;
     console.log('Leitura recebida:', reading);
 
     const analysis = await analyzeEnvironment(reading);
