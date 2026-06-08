@@ -13,16 +13,15 @@ let currentData = {
   signalStrength: -67
 };
 
-// Inicialização simples
+// Inicialização
 function initDashboard() {
   console.log("🚀 Iniciando Dashboard...");
 
-  // Tenta criar o client Supabase
   if (typeof Supabase !== "undefined") {
     supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     console.log("✅ Supabase criado com sucesso!");
   } else {
-    console.warn("⚠️ Supabase não carregou. Usando modo offline (simulado).");
+    console.warn("⚠️ Supabase não carregou. Usando modo simulado.");
   }
 
   renderDashboard();
@@ -61,7 +60,6 @@ function renderDashboard() {
 
 async function fetchLatestReading() {
   if (!supabase) {
-    console.log("📊 Usando dados simulados (Supabase não disponível)");
     renderDashboard();
     return;
   }
@@ -78,13 +76,13 @@ async function fetchLatestReading() {
 
     if (data) {
       currentData = { ...currentData, ...data };
-      console.log("📡 Dados reais do Supabase:", currentData);
+      console.log("📡 Dados reais carregados!");
     }
   } catch (e) {
-    console.warn("Tabela vazia ou erro:", e.message);
+    console.warn("Usando dados simulados:", e.message);
   }
   renderDashboard();
 }
 
-// Iniciar
+// Iniciar quando a página carregar
 document.addEventListener('DOMContentLoaded', initDashboard);
