@@ -1,8 +1,8 @@
-// ==================== CONFIGURAÇÃO SUPABASE ====================
+// ==================== CONFIG SUPABASE ====================
 const SUPABASE_URL = 'https://iaylyacrzurcjwvtecpu.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_pkzx4u5U9Xr407syiBE9yA_G7hUvGaw';
 
-let supabase = null;
+let supabaseClient = null;
 let currentData = {
   temperature: 24.7,
   humidity: 51.2,
@@ -13,12 +13,11 @@ let currentData = {
   signalStrength: -67
 };
 
-// Inicialização
 function initDashboard() {
   console.log("🚀 Iniciando Dashboard...");
 
   if (typeof Supabase !== "undefined") {
-    supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    supabaseClient = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     console.log("✅ Supabase criado com sucesso!");
   } else {
     console.warn("⚠️ Supabase não carregou. Usando modo simulado.");
@@ -30,7 +29,10 @@ function initDashboard() {
 }
 
 function renderDashboard() {
-  document.getElementById('measurements').innerHTML = `
+  const container = document.getElementById('measurements');
+  if (!container) return;
+
+  container.innerHTML = `
     <div class="bg-gray-900 rounded-3xl p-6 card">
       <div class="flex items-center gap-3 text-emerald-400 mb-2">
         <i class="fas fa-thermometer-half text-3xl"></i>
@@ -59,13 +61,13 @@ function renderDashboard() {
 }
 
 async function fetchLatestReading() {
-  if (!supabase) {
+  if (!supabaseClient) {
     renderDashboard();
     return;
   }
 
   try {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseClient
       .from('sensor_readings')
       .select('*')
       .order('created_at', { ascending: false })
@@ -73,10 +75,9 @@ async function fetchLatestReading() {
       .single();
 
     if (error) throw error;
-
     if (data) {
       currentData = { ...currentData, ...data };
-      console.log("📡 Dados reais carregados!");
+      console.log("📡 Dados reais do Supabase carregados");
     }
   } catch (e) {
     console.warn("Usando dados simulados:", e.message);
@@ -84,5 +85,5 @@ async function fetchLatestReading() {
   renderDashboard();
 }
 
-// Iniciar quando a página carregar
+// Iniciar
 document.addEventListener('DOMContentLoaded', initDashboard);
