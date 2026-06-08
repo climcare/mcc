@@ -3,6 +3,20 @@ const SUPABASE_URL = 'https://iaylyacrzurcjwvtecpu.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_pkzx4u5U9Xr407syiBE9yA_G7hUvGaw';
 
 let supabase = null;
+
+// Aguarda o Supabase carregar
+function waitForSupabase() {
+  if (typeof Supabase !== "undefined") {
+    supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    console.log("✅ Supabase carregado com sucesso!");
+    startDashboard();
+  } else {
+    console.log("⏳ Aguardando Supabase...");
+    setTimeout(waitForSupabase, 200);
+  }
+}
+
+// ==================== DADOS E RENDERIZAÇÃO ====================
 let currentData = {
   temperature: 24.7,
   humidity: 51.2,
@@ -12,25 +26,6 @@ let currentData = {
   battery: 88,
   signalStrength: -67
 };
-
-// ==================== INICIALIZAÇÃO ====================
-console.log("🚀 Iniciando Dashboard...");
-
-function initDashboard() {
-  // Tenta inicializar Supabase
-  if (typeof Supabase !== "undefined") {
-    supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    console.log("✅ Supabase carregado com sucesso!");
-  } else {
-    console.warn("⚠️ Supabase não carregou. Modo simulado ativo.");
-  }
-
-  renderDashboard();
-  fetchLatestReading();
-
-  // Atualiza a cada 10 segundos
-  setInterval(fetchLatestReading, 10000);
-}
 
 function renderDashboard() {
   document.getElementById('measurements').innerHTML = `
@@ -59,15 +54,12 @@ function renderDashboard() {
       </div>
     </div>
   `;
+  console.log("✅ Dashboard atualizado");
 }
 
-// Buscar último registro
+// Buscar dados do Supabase
 async function fetchLatestReading() {
-  if (!supabase) {
-    console.log("🔄 Usando dados simulados (Supabase não disponível)");
-    renderDashboard();
-    return;
-  }
+  if (!supabase) return;
 
   try {
     const { data, error } = await supabase
@@ -81,7 +73,7 @@ async function fetchLatestReading() {
 
     if (data) {
       currentData = { ...currentData, ...data };
-      console.log("📡 Dados reais do Supabase:", currentData);
+      console.log("📡 Dados do Supabase carregados");
     }
   } catch (e) {
     console.warn("Tabela vazia ou erro:", e.message);
@@ -89,5 +81,13 @@ async function fetchLatestReading() {
   renderDashboard();
 }
 
-// Iniciar quando a página carregar
-window.onload = initDashboard;
+function startDashboard() {
+  renderDashboard();
+  fetchLatestReading();
+  setInterval(fetchLatestReading, 15000);
+}
+
+// Iniciar tudo
+document.addEventListener('DOMContentLoaded', () => {
+  waitForSupabase();
+});
