@@ -30,7 +30,38 @@ async function loadLatestReading() {
     console.log('Leitura recebida:', reading);
 
     const analysis = await analyzeEnvironment(reading);
+    const scoreColor =
+    analysis.score >= 90 ? '#22c55e' :
+    analysis.score >= 75 ? '#3b82f6' :
+    analysis.score >= 50 ? '#eab308' :
+    '#ef4444';
 
+    document.getElementById('scoreCard').innerHTML = `
+    <h2 class="text-2xl font-bold mb-4">
+        Índice Clim Care
+    </h2>
+
+    <div
+        style="
+            width:180px;
+            height:180px;
+            border-radius:50%;
+            margin:auto;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            border:12px solid ${scoreColor};
+            font-size:56px;
+            font-weight:bold;
+            color:${scoreColor};
+        ">
+        ${analysis.score}
+    </div>
+
+    <div class="mt-4 text-xl font-semibold">
+        ${analysis.status}
+    </div>
+`;
     document.getElementById('cards').innerHTML = `
         <div class="card">
             <h3 class="text-xl mb-2">Temperatura</h3>
