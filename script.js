@@ -1,4 +1,4 @@
-// ==================== CONFIG SUPABASE ====================
+// ==================== CONFIGURAÇÃO SUPABASE ====================
 const SUPABASE_URL = 'https://iaylyacrzurcjwvtecpu.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_pkzx4u5U9Xr407syiBE9yA_G7hUvGaw';
 
@@ -20,7 +20,7 @@ function initDashboard() {
     supabaseClient = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     console.log("✅ Supabase criado com sucesso!");
   } else {
-    console.warn("⚠️ Supabase não carregou. Usando modo simulado.");
+    console.warn("⚠️ Supabase não carregou. Modo simulado ativo.");
   }
 
   renderDashboard();
@@ -77,7 +77,7 @@ async function fetchLatestReading() {
     if (error) throw error;
     if (data) {
       currentData = { ...currentData, ...data };
-      console.log("📡 Dados reais do Supabase carregados");
+      console.log("📡 Dados reais carregados do Supabase");
     }
   } catch (e) {
     console.warn("Usando dados simulados:", e.message);
