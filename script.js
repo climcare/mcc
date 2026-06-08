@@ -95,10 +95,6 @@ async function loadLatestReading() {
             <div class="text-4xl font-bold">${reading.signalStrength ?? '--'} dBm</div>
         </div>
 
-        <div class="card">
-            <h3 class="text-xl mb-2">Índice Clim Care</h3>
-            <div class="text-4xl font-bold">${analysis.score}</div>
-        </div>
     `;
 
     document.getElementById('statusCard').innerHTML = `
