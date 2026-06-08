@@ -79,23 +79,39 @@ async function loadLatestReading() {
         ${analysis.status}
     </div>
 `;
-    document.getElementById('cards').innerHTML = `
-        <div class="card">
-            <h3 class="text-xl mb-2">Temperatura</h3>
-            <div class="text-4xl font-bold">${reading.temperature ?? '--'}°C</div>
+   document.getElementById('cards').innerHTML = `
+
+    <div class="card flex flex-col justify-center">
+        <div class="text-xs uppercase tracking-wider text-slate-400 mb-1">
+            Temperatura
         </div>
 
-        <div class="card">
-            <h3 class="text-xl mb-2">Umidade</h3>
-            <div class="text-4xl font-bold">${reading.humidity ?? '--'}%</div>
+        <div class="text-2xl font-bold text-cyan-400">
+            🌡 ${reading.temperature ?? '--'}°C
+        </div>
+    </div>
+
+    <div class="card flex flex-col justify-center">
+        <div class="text-xs uppercase tracking-wider text-slate-400 mb-1">
+            Umidade
         </div>
 
-        <div class="card">
-            <h3 class="text-xl mb-2">Wi-Fi</h3>
-            <div class="text-4xl font-bold">${reading.signalStrength ?? '--'} dBm</div>
+        <div class="text-2xl font-bold text-blue-400">
+            💧 ${reading.humidity ?? '--'}%
+        </div>
+    </div>
+
+    <div class="card flex flex-col justify-center">
+        <div class="text-xs uppercase tracking-wider text-slate-400 mb-1">
+            Wi-Fi
         </div>
 
-    `;
+        <div class="text-2xl font-bold text-green-400">
+            📶 ${reading.signalStrength ?? '--'} dBm
+        </div>
+    </div>
+
+`;
 
     document.getElementById('statusCard').innerHTML = `
         <h2 class="text-2xl font-bold mb-4">
