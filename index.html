@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-      <!-- Supabase Client -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="script.js" type="module"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel  - Qualidade do Ar Interno</title>
+    <title>Painel - Qualidade do Ar Interno</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
         body { font-family: 'Inter', system-ui, sans-serif; }
@@ -34,7 +34,6 @@
                     <div class="w-3 h-3 bg-emerald-400 rounded-full animate-pulse"></div>
                     <span class="text-sm">Online</span>
                 </div>
-              
             </div>
         </header>
 
@@ -44,23 +43,18 @@
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <!-- Alertas e Diagnósticos -->
+            <!-- Alertas -->
             <div class="lg:col-span-2 bg-gray-900 rounded-3xl p-6">
                 <h2 class="text-2xl font-semibold mb-6 flex items-center gap-3">
                     <i class="fas fa-exclamation-triangle text-amber-400"></i>
                     Alertas e Anomalias Detectadas
                 </h2>
-                <div id="alerts-container" class="space-y-4">
-                    <!-- Populated by JS -->
-                </div>
+                <div id="alerts-container" class="space-y-4"></div>
             </div>
-
-            <!-- Previsões / Resumo -->
+            <!-- Resumo -->
             <div class="bg-gray-900 rounded-3xl p-6">
-                <h2 class="text-2xl font-semibold mb-6">Resumo &amp; Recomendações</h2>
-                <div id="summary" class="space-y-6">
-                    <!-- Populated by JS -->
-                </div>
+                <h2 class="text-2xl font-semibold mb-6">Resumo & Recomendações</h2>
+                <div id="summary" class="space-y-6"></div>
             </div>
         </div>
 
@@ -68,14 +62,11 @@
         <div class="mt-8 bg-gray-900 rounded-3xl p-6">
             <div class="flex justify-between mb-6">
                 <h2 class="text-2xl font-semibold">Evolução Recente (Últimas 24h)</h2>
-                <select id="chart-period" onchange="updateChart()" class="bg-gray-800 text-white rounded-xl px-4 py-2">
-                    <option value="24h">Últimas 24 horas</option>
-                    <option value="7d">Últimos 7 dias</option>
-                </select>
             </div>
             <canvas id="evolutionChart" class="w-full" height="120"></canvas>
         </div>
     </div>
-  <script src="script.js" type="module"></script>
+
+    <script src="script.js" type="module"></script>
 </body>
 </html>
