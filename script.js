@@ -1,22 +1,8 @@
-// ==================== CONFIGURAÇÃO SUPABASE ====================
+// ==================== CONFIGURAÇÃO ====================
 const SUPABASE_URL = 'https://iaylyacrzurcjwvtecpu.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_pkzx4u5U9Xr407syiBE9yA_G7hUvGaw';
 
 let supabase = null;
-
-// Aguarda o Supabase carregar
-function waitForSupabase() {
-  if (typeof Supabase !== "undefined") {
-    supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    console.log("✅ Supabase carregado com sucesso!");
-    startDashboard();
-  } else {
-    console.log("⏳ Aguardando Supabase...");
-    setTimeout(waitForSupabase, 200);
-  }
-}
-
-// ==================== DADOS E RENDERIZAÇÃO ====================
 let currentData = {
   temperature: 24.7,
   humidity: 51.2,
@@ -27,7 +13,45 @@ let currentData = {
   signalStrength: -67
 };
 
+// ==================== REGRAS DE ALERTAS ====================
+const rules = [
+  {
+    condition: (d) => d.temperature > 26 && d.humidity > 60,
+    title: "Condições Abafadas",
+    severity: "amber",
+    diagnosis: "Temperatura alta combinada com umidade elevada causa desconforto e fadiga.",
+    mitigation: "Aumentar ventilação, ligar ar-condicionado ou desumidificador."
+  },
+  {
+    condition: (d) => d.humidity > 65 && d.temperature < 22,
+    title: "Risco de Mofo e Condensação",
+    severity: "red",
+    diagnosis: "Umidade alta + temperatura baixa favorece proliferação de fungos e bactérias.",
+    mitigation: "Acionar aquecimento, reduzir resfriamento do AC, fechar janelas."
+  },
+  {
+    condition: (d) => d.co2 > 1000,
+    title: "Ventilação Insuficiente",
+    severity: "amber",
+    diagnosis: "Nível elevado de CO₂ indica acúmulo de bioefluentes (baixa renovação de ar).",
+    mitigation: "Abrir janelas, aumentar taxa de ar fresco no HVAC."
+  },
+  {
+    condition: (d) => d.pm25 > 25,
+    title: "Poluição por Partículas",
+    severity: "red",
+    diagnosis: "Concentração alta de PM2.5 pode afetar vias respiratórias.",
+    mitigation: "Usar purificador com filtro HEPA, evitar fontes geradoras."
+  }
+];
+
+function getAlerts(data) {
+  return rules.filter(rule => rule.condition(data));
+}
+
+// ==================== RENDERIZAÇÃO ====================
 function renderDashboard() {
+  // Cards
   document.getElementById('measurements').innerHTML = `
     <div class="bg-gray-900 rounded-3xl p-6 card">
       <div class="flex items-center gap-3 text-emerald-400 mb-2">
@@ -54,40 +78,53 @@ function renderDashboard() {
       </div>
     </div>
   `;
-  console.log("✅ Dashboard atualizado");
+
+  // Alertas
+  const alerts = getAlerts(currentData);
+  const alertsHTML = alerts.length ? alerts.map(alert => `
+    <div class="bg-gray-800 border-l-4 border-${alert.severity}-500 p-4 rounded-xl">
+      <div class="flex items-start gap-3">
+        <i class="fas fa-exclamation-triangle text-${alert.severity}-400 mt-1"></i>
+        <div>
+          <h3 class="font-semibold">${alert.title}</h3>
+          <p class="text-sm text-gray-400">${alert.diagnosis}</p>
+          <p class="text-sm text-emerald-400 mt-2"><strong>Mitigação:</strong> ${alert.mitigation}</p>
+        </div>
+      </div>
+    </div>
+  `).join('') : `<p class="text-emerald-400">✅ Todas as condições dentro da faixa aceitável.</p>`;
+
+  document.getElementById('alerts-container').innerHTML = alertsHTML;
 }
 
-// Buscar dados do Supabase
+// Buscar dados
 async function fetchLatestReading() {
   if (!supabase) return;
 
   try {
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from('sensor_readings')
       .select('*')
       .order('created_at', { ascending: false })
       .limit(1)
       .single();
 
-    if (error) throw error;
+    if (data) currentData = { ...currentData, ...data };
+  } catch (e) {}
+  renderDashboard();
+}
 
-    if (data) {
-      currentData = { ...currentData, ...data };
-      console.log("📡 Dados do Supabase carregados");
-    }
-  } catch (e) {
-    console.warn("Tabela vazia ou erro:", e.message);
+function initDashboard() {
+  console.log("🚀 Iniciando Dashboard...");
+  if (typeof Supabase !== "undefined") {
+    supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    console.log("✅ Supabase carregado!");
+  } else {
+    console.warn("⚠️ Supabase não carregou. Modo simulado ativo.");
   }
   renderDashboard();
-}
-
-function startDashboard() {
-  renderDashboard();
   fetchLatestReading();
-  setInterval(fetchLatestReading, 15000);
+  setInterval(fetchLatestReading, 10000);
 }
 
-// Iniciar tudo
-document.addEventListener('DOMContentLoaded', () => {
-  waitForSupabase();
-});
+window.onload = initDashboard;
