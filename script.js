@@ -60,15 +60,15 @@ async function loadLatestReading() {
 
     <div
         style="
-            width:180px;
-            height:180px;
+            width:140px;
+            height:140px;
             border-radius:50%;
             margin:auto;
             display:flex;
             align-items:center;
             justify-content:center;
-            border:12px solid ${scoreColor};
-            font-size:56px;
+            border:10px solid ${scoreColor};
+            font-size:42px;
             font-weight:bold;
             color:${scoreColor};
         ">
