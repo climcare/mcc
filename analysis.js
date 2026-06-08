@@ -4,15 +4,12 @@ async function analyzeEnvironment(reading) {
     const rules = await response.json();
 
     let score = 100;
-    let status = "EXCELLENT";
 
     const alerts = [];
     const diagnosis = [];
     const mitigations = [];
 
-    // ======================
     // TEMPERATURA
-    // ======================
 
     if (
         reading.temperature < rules.temperature.ideal_min ||
@@ -21,23 +18,18 @@ async function analyzeEnvironment(reading) {
 
         score -= 15;
 
-        alerts.push({
-            severity: "warning",
-            title: "Temperatura fora da faixa ideal"
-        });
+        alerts.push("Temperatura fora da faixa ideal.");
 
         diagnosis.push(
-            "Temperatura fora da faixa recomendada para conforto ambiental."
+            "A temperatura está fora da faixa recomendada para conforto ambiental."
         );
 
         mitigations.push(
-            "Verificar ajuste do sistema de climatização."
+            "Verificar configuração do sistema de climatização."
         );
     }
 
-    // ======================
     // UMIDADE
-    // ======================
 
     if (
         reading.humidity < rules.humidity.ideal_min ||
@@ -46,13 +38,10 @@ async function analyzeEnvironment(reading) {
 
         score -= 15;
 
-        alerts.push({
-            severity: "warning",
-            title: "Umidade fora da faixa ideal"
-        });
+        alerts.push("Umidade fora da faixa ideal.");
 
         diagnosis.push(
-            "Umidade fora da faixa recomendada pela OMS."
+            "A umidade encontra-se fora da faixa recomendada pela OMS."
         );
 
         mitigations.push(
@@ -60,70 +49,30 @@ async function analyzeEnvironment(reading) {
         );
     }
 
-    // ======================
-    // CO2
-    // ======================
+    // CENÁRIO ESPECÍFICO
 
     if (
-        reading.co2 &&
-        reading.co2 > rules.co2.ideal_max
-    ) {
-
-        score -= 25;
-
-        alerts.push({
-            severity: "high",
-            title: "CO₂ elevado"
-        });
-
-        diagnosis.push(
-            "Ventilação insuficiente detectada."
-        );
-
-        mitigations.push(
-            "Aumentar a renovação de ar externo."
-        );
-    }
-
-    // ======================
-    // CENÁRIOS COMPOSTOS
-    // ======================
-
-    if (
-        reading.temperature < 21 &&
+        reading.temperature >= 21 &&
+        reading.temperature <= 25 &&
         reading.humidity > 60
     ) {
 
-        score -= 20;
-
-        alerts.push({
-            severity: "high",
-            title: "Risco de Mofo e Condensação"
-        });
+        score -= 10;
 
         diagnosis.push(
-            "Condições favoráveis ao crescimento de fungos e bactérias."
+            "O ambiente apresenta potencial moderado para proliferação microbiológica."
         );
 
         mitigations.push(
-            "Reduzir umidade e elevar temperatura ambiente."
+            "Monitorar condensação e crescimento de fungos."
         );
     }
 
-    // ======================
-    // CLASSIFICAÇÃO
-    // ======================
+    let status = "EXCELENTE";
 
-    if (score >= 90)
-        status = "EXCELLENT";
-    else if (score >= 80)
-        status = "GOOD";
-    else if (score >= 60)
-        status = "ATTENTION";
-    else if (score >= 40)
-        status = "POOR";
-    else
-        status = "CRITICAL";
+    if (score < 90) status = "BOM";
+    if (score < 75) status = "ATENÇÃO";
+    if (score < 50) status = "CRÍTICO";
 
     return {
         score,
@@ -133,3 +82,7 @@ async function analyzeEnvironment(reading) {
         mitigations
     };
 }
+analyzeEnvironment({
+    temperature: 24.1,
+    humidity: 64
+}).then(console.log);
