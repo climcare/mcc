@@ -202,13 +202,12 @@ document.getElementById('environmentStatus').innerHTML = `
 `;
 }
 
+
 // Primeira carga
 loadLatestReading();
 
-lastReadingId = reading.id;
-// Atualização automática a cada 60 segundos
+// Atualização automática
 setInterval(() => {
     console.log('Atualizando dados...');
     loadLatestReading();
 }, 60000);
-  
