@@ -6,7 +6,7 @@ const supabaseClient = supabase.createClient(
     SUPABASE_URL,
     SUPABASE_ANON_KEY
 );
-
+let lastReadingId = null;
 async function loadLatestReading() {
 
     const { data, error } = await supabaseClient
@@ -31,7 +31,9 @@ async function loadLatestReading() {
         <div class="w-3 h-3 rounded-full bg-green-500"></div>
         <span class="font-semibold">ONLINE</span>
     </div>
-
+<div class="text-xs text-slate-500 mt-2">
+    Atualização automática: 60s
+</div>
     <div class="text-sm text-slate-300">
         Dispositivo:
         <strong>${reading.deviceId}</strong>
@@ -200,5 +202,18 @@ document.getElementById('environmentStatus').innerHTML = `
 `;
 }
 
+// Primeira carga
 loadLatestReading();
+const reading = data[0];
+
+if (lastReadingId === reading.id) {
+    return; // nada mudou
+}
+
+lastReadingId = reading.id;
+// Atualização automática a cada 60 segundos
+setInterval(() => {
+    console.log('Atualizando dados...');
+    loadLatestReading();
+}, 60000);
   
