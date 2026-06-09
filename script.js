@@ -6,7 +6,7 @@ const supabaseClient = supabase.createClient(
     SUPABASE_URL,
     SUPABASE_ANON_KEY
 );
-let lastReadingId = null;
+
 async function loadLatestReading() {
 
     const { data, error } = await supabaseClient
@@ -204,11 +204,6 @@ document.getElementById('environmentStatus').innerHTML = `
 
 // Primeira carga
 loadLatestReading();
-const reading = data[0];
-
-if (lastReadingId === reading.id) {
-    return; // nada mudou
-}
 
 lastReadingId = reading.id;
 // Atualização automática a cada 60 segundos
