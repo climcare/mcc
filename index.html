@@ -6,16 +6,16 @@
     <title>QAI - Qualidade do Ar Interno</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Supabase - carregado ANTES do script.js -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <style>
-        body { background: #0f172a; color: white; font-family: system-ui, sans-serif; }
+        body { background: #0f172a; color: white; }
         .card {
             background: #1e293b;
             border-radius: 16px;
             padding: 20px;
             border: 1px solid rgba(255,255,255,0.06);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
         }
     </style>
 </head>
@@ -49,7 +49,7 @@
         </div>
     </div>
 
-    <script src="analysis.js"></script>
+       <script src="analysis.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
