@@ -10,7 +10,7 @@ window.onload = async () => {
 
     // Inicializa Supabase
     if (typeof Supabase !== "undefined") {
-        supabaseClient = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         console.log("✅ Supabase Client criado!");
         
         await lerUltimaLeitura();
