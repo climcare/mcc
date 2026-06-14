@@ -80,4 +80,17 @@ function renderUI(reading, analysis) {
             <div class="text-5xl">🌡️</div>
             <div class="text-4xl font-bold">${reading.temperature?.toFixed(1) || '—'}°C</div>
         </div>
-        <div class="card text-center p
+        <div class="card text-center p-6">
+            <div class="text-5xl">💧</div>
+            <div class="text-4xl font-bold">${reading.humidity?.toFixed(1) || '—'}%</div>
+        </div>
+        <div class="card text-center p-6">
+            <div class="text-5xl">🌬️</div>
+            <div class="text-4xl font-bold">${reading.co2 || '—'}</div>
+        </div>
+    `;
+
+    document.getElementById('statusCard').innerHTML = `<h2 class="font-bold mb-3">Diagnóstico</h2>${analysis.diagnosis.map(d => `<p>• ${d}</p>`).join('')}`;
+    document.getElementById('alertsCard').innerHTML = `<h2 class="font-bold mb-3">Alertas</h2>${analysis.alerts.map(a => `<p>⚠️ ${a}</p>`).join('')}`;
+    document.getElementById('mitigationCard').innerHTML = `<h2 class="font-bold mb-3">Mitigações</h2>${analysis.mitigations.map(m => `<p>✓ ${m}</p>`).join('')}`;
+}
