@@ -1,106 +1,55 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QAI</title>
-
+    <title>QAI - Qualidade do Ar Interno</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
-
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
+    
     <style>
-        body {
-            background: #0f172a;
-            color: white;
+        body { background: #0f172a; color: white; font-family: system-ui, sans-serif; }
+        .card {
+            background: #1e293b;
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid rgba(255,255,255,0.06);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
         }
-
-       .card {
-    background: #1e293b;
-    border-radius: 16px;
-    padding: 14px;
-    border: 1px solid rgba(255,255,255,0.06);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-}
     </style>
 </head>
-
 <body>
-<body>
-
     <div class="max-w-7xl mx-auto p-6">
-
         <!-- HEADER -->
-        <div class="flex flex-col lg:flex-row lg:justify-between lg:items-center mb-6">
-
+        <div class="flex flex-col lg:flex-row lg:justify-between lg:items-center mb-8">
             <div>
-                <h1 class="text-3xl font-bold mb-2">
-                    QAI - Plataforma Inteligente de Qualidade Ambiental Interna
-                </h1>
-
-                <p class="text-slate-400">
-                    
-                </p>
+                <h1 class="text-3xl font-bold">QAI - Plataforma Inteligente</h1>
+                <p class="text-slate-400">Qualidade Ambiental Interna</p>
             </div>
-
-            <div id="deviceInfo"
-                class="card mt-4 lg:mt-0 min-w-[280px]">
-            </div>
-
+            <div id="deviceInfo" class="card mt-4 lg:mt-0 min-w-[280px]"></div>
         </div>
 
         <!-- TOPO -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
-
-            <!-- SCORE -->
-            <div id="scoreCard"
-                class="card">
-            </div>
-
-            <!-- MÉTRICAS -->
-            <div id="cards"
-                class="lg:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4">
-            </div>
-
+            <div id="scoreCard" class="card"></div>
+            <div id="cards" class="lg:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4"></div>
         </div>
 
         <!-- CENTRO -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
-
-            <!-- SEMÁFORO -->
-            <div id="environmentStatus"
-                class="card">
-            </div>
-
-            <!-- DIAGNÓSTICO -->
-            <div id="statusCard"
-                class="card">
-            </div>
-
+            <div id="environmentStatus" class="card"></div>
+            <div id="statusCard" class="card"></div>
         </div>
 
         <!-- BASE -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-
-            <!-- ALERTAS -->
-            <div id="alertsCard"
-                class="card">
-            </div>
-
-            <!-- MITIGAÇÕES -->
-            <div id="mitigationCard"
-                class="card">
-            </div>
-
+            <div id="alertsCard" class="card"></div>
+            <div id="mitigationCard" class="card"></div>
         </div>
-
     </div>
 
     <script src="analysis.js"></script>
     <script src="script.js"></script>
-
-</body>
-    
 </body>
 </html>
