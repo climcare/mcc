@@ -1,120 +1,90 @@
-// ==================== CONFIGURAÇÃO SUPABASE ====================
-const SUPABASE_URL = 'https://iaylyacrzurcjwvtecpu.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_pkzx4u5U9Xr407syiBE9yA_G7hUvGaw';
+// ==================== CONFIGURAÇÃO BÁSICA ====================
+console.log("🚀 Dashboard iniciado");
 
-let supabaseClient = null;
+let currentData = {
+  temperature: 24.1,
+  humidity: 64,
+  co2: 730,
+  deviceId: "HOSPITAL-01"
+};
 
-// ==================== INICIALIZAÇÃO ====================
-async function initSupabase() {
-    if (typeof Supabase !== "undefined") {
-        supabaseClient = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        console.log("✅ Supabase conectado com sucesso!");
-    } else {
-        console.error("❌ Supabase JS não carregou");
-    }
-}
-
-async function loadLatestReading() {
-    if (!supabaseClient) {
-        console.warn("Supabase ainda não inicializado");
-        return;
-    }
-
+// Função de análise (chamada do analysis.js)
+async function updateDashboard() {
     try {
-        const { data, error } = await supabaseClient
-            .from('sensor_readings')
-            .select('*')
-            .order('created_at', { ascending: false })
-            .limit(1);
+        const analysis = await analyzeEnvironment(currentData);
 
-        if (error) throw error;
-        if (!data || data.length === 0) {
-            console.log('Nenhuma leitura encontrada ainda');
-            return;
-        }
-
-        const reading = data[0];
-        console.log('📡 Leitura recebida:', reading);
-
-        // Análise completa
-        const analysis = await analyzeEnvironment(reading);
-
-        // Atualiza Device Info
+        // Device Info
         document.getElementById('deviceInfo').innerHTML = `
-            <div class="flex items-center gap-2 mb-2">
-                <div class="w-3 h-3 rounded-full bg-green-500"></div>
-                <span class="font-semibold">ONLINE</span>
-            </div>
-            <div class="text-sm text-slate-300">
-                Dispositivo: <strong>${reading.deviceId || 'N/A'}</strong>
-            </div>
-            <div class="text-xs text-slate-500">
-                Última atualização: ${new Date(reading.created_at).toLocaleTimeString('pt-BR')}
+            <div class="flex items-center gap-3">
+                <div class="w-4 h-4 bg-green-500 rounded-full animate-pulse"></div>
+                <div>
+                    <div class="font-semibold">Dispositivo Online</div>
+                    <div class="text-sm text-slate-400">${currentData.deviceId}</div>
+                </div>
             </div>
         `;
 
-        // Score Card
-        const scoreColor = analysis.score >= 90 ? '#22c55e' : 
-                          analysis.score >= 75 ? '#3b82f6' : 
-                          analysis.score >= 50 ? '#eab308' : '#ef4444';
-
+        // Score
+        const scoreColor = analysis.score >= 90 ? '#22c55e' : analysis.score >= 75 ? '#eab308' : '#ef4444';
         document.getElementById('scoreCard').innerHTML = `
-            <h2 class="text-2xl font-bold mb-4 text-center">Índice Clim Care</h2>
+            <h2 class="text-2xl font-bold text-center mb-4">Índice Clim Care</h2>
             <div class="flex justify-center">
-                <div style="width: 160px; height: 160px; border-radius: 50%; border: 14px solid ${scoreColor}; 
-                            display: flex; align-items: center; justify-content: center; font-size: 48px; font-weight: bold; color: ${scoreColor};">
+                <div style="width:150px;height:150px;border-radius:9999px;border:12px solid ${scoreColor};display:flex;align-items:center;justify-content:center;font-size:52px;font-weight:bold;color:${scoreColor}">
                     ${analysis.score}
                 </div>
             </div>
-            <div class="text-center mt-4 text-2xl font-semibold">${analysis.status}</div>
+            <p class="text-center mt-4 text-2xl font-semibold">${analysis.status}</p>
         `;
 
-        // Cards de métricas
+        // Cards básicos
         document.getElementById('cards').innerHTML = `
-            <div class="card">
-                <div class="text-xs uppercase tracking-wider text-slate-400">Temperatura</div>
-                <div class="text-3xl font-bold text-cyan-400 mt-2">🌡️ ${reading.temperature?.toFixed(1) || '--'}°C</div>
+            <div class="card text-center">
+                <div class="text-cyan-400 text-4xl">🌡️</div>
+                <div class="text-3xl font-bold mt-2">${currentData.temperature}°C</div>
+                <div class="text-xs text-slate-400">Temperatura</div>
             </div>
-            <div class="card">
-                <div class="text-xs uppercase tracking-wider text-slate-400">Umidade</div>
-                <div class="text-3xl font-bold text-blue-400 mt-2">💧 ${reading.humidity?.toFixed(1) || '--'}%</div>
+            <div class="card text-center">
+                <div class="text-blue-400 text-4xl">💧</div>
+                <div class="text-3xl font-bold mt-2">${currentData.humidity}%</div>
+                <div class="text-xs text-slate-400">Umidade</div>
             </div>
-            <div class="card">
-                <div class="text-xs uppercase tracking-wider text-slate-400">CO₂</div>
-                <div class="text-3xl font-bold text-violet-400 mt-2">${reading.co2 || '--'} ppm</div>
+            <div class="card text-center">
+                <div class="text-violet-400 text-4xl">🌬️</div>
+                <div class="text-3xl font-bold mt-2">${currentData.co2}</div>
+                <div class="text-xs text-slate-400">CO₂ ppm</div>
             </div>
         `;
 
-        // Diagnóstico, Alertas e Mitigações
+        // Diagnóstico e Alertas
         document.getElementById('statusCard').innerHTML = `
-            <h2 class="text-xl font-bold mb-3">Diagnóstico Ambiental</h2>
-            <ul class="space-y-2 text-slate-300">
-                ${analysis.diagnosis.map(d => `<li>• ${d}</li>`).join('')}
-            </ul>
+            <h2 class="font-bold mb-3">Diagnóstico</h2>
+            <div class="text-slate-300">${analysis.diagnosis.join('<br>')}</div>
         `;
 
         document.getElementById('alertsCard').innerHTML = `
-            <h2 class="text-xl font-bold mb-3">Alertas Ativos</h2>
-            <ul class="space-y-2 text-amber-400">
-                ${analysis.alerts.map(a => `<li>⚠️ ${a}</li>`).join('')}
-            </ul>
+            <h2 class="font-bold mb-3">Alertas</h2>
+            <ul class="list-disc pl-5">${analysis.alerts.map(a => `<li>${a}</li>`).join('')}</ul>
         `;
 
         document.getElementById('mitigationCard').innerHTML = `
-            <h2 class="text-xl font-bold mb-3">Ações Recomendadas</h2>
-            <ul class="space-y-2 text-emerald-400">
-                ${analysis.mitigations.map(m => `<li>✓ ${m}</li>`).join('')}
-            </ul>
+            <h2 class="font-bold mb-3">Mitigações</h2>
+            <ul class="list-disc pl-5">${analysis.mitigations.map(m => `<li>${m}</li>`).join('')}</ul>
         `;
 
-    } catch (err) {
-        console.error("Erro ao carregar leitura:", err);
+    } catch (e) {
+        console.error("Erro ao atualizar dashboard:", e);
     }
 }
 
 // Inicialização
-window.onload = async () => {
-    await initSupabase();
-    await loadLatestReading();
-    setInterval(loadLatestReading, 60000); // Atualiza a cada 60 segundos
+window.onload = () => {
+    console.log("✅ Página carregada");
+    updateDashboard();
+    
+    // Simula atualização
+    setInterval(() => {
+        currentData.temperature = (Math.random() * 5 + 22).toFixed(1);
+        currentData.humidity = Math.floor(Math.random() * 30 + 45);
+        updateDashboard();
+    }, 8000);
 };
