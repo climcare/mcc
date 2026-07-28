@@ -1,62 +1,101 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="dark">
 
 <head>
 
     <meta charset="UTF-8">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    <title>QAI LIGHT - Qualidade do Ar Interno</title>
+    <title>QAI | Qualidade do Ar Interno</title>
+
+    <!-- =====================================================
+         FONTE
+    ====================================================== -->
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet"
+    >
 
 
-    <!-- SUPABASE -->
+    <!-- =====================================================
+         TAILWIND
+    ====================================================== -->
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+
+    <script>
+
+        tailwind.config = {
+
+            darkMode: "class",
+
+            theme: {
+
+                extend: {
+
+                    fontFamily: {
+
+                        sans: [
+                            "Inter",
+                            "system-ui",
+                            "sans-serif"
+                        ]
+
+                    }
+
+                }
+
+            }
+
+        };
+
+    </script>
+
+
+    <!-- =====================================================
+         SUPABASE
+    ====================================================== -->
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 
+    <!-- =====================================================
+         CSS
+    ====================================================== -->
+
     <style>
 
-        /* =========================================================
-           VARIÁVEIS
-        ========================================================= */
-
-        :root {
-
-            --bg: #020b12;
-
-            --panel: #06131d;
-
-            --panel2: #081925;
-
-            --line: #17445a;
-
-            --cyan: #12bfff;
-
-            --green: #62d90b;
-
-            --yellow: #ffd400;
-
-            --orange: #ff7a00;
-
-            --red: #ff3038;
-
-            --purple: #9b45ff;
-
-            --muted: #a9bfd0;
-
-            --white: #f7fbff;
-
-        }
-
-
-        /* =========================================================
-           RESET
-        ========================================================= */
+        /* =====================================================
+           BASE
+        ====================================================== */
 
         * {
 
             box-sizing: border-box;
+
+        }
+
+
+        html {
+
+            scroll-behavior: smooth;
 
         }
 
@@ -67,1085 +106,224 @@
 
             min-height: 100vh;
 
-            color: var(--white);
+            font-family: "Inter", sans-serif;
 
-            font-family:
-                Inter,
-                Arial,
-                Helvetica,
-                sans-serif;
+        }
+
+
+        body {
 
             background:
 
                 radial-gradient(
-                    circle at 50% 35%,
-                    rgba(0, 150, 210, 0.08),
-                    transparent 30%
+                    circle at 50% 0%,
+                    rgba(14, 165, 233, 0.05),
+                    transparent 35%
                 ),
 
-                linear-gradient(
-                    180deg,
-                    #01080e,
-                    #03111a 55%,
-                    #020a10
-                );
+                #080d16;
 
         }
 
 
-        /* =========================================================
-           CONTAINER
-        ========================================================= */
+        /* =====================================================
+           SCROLL
+        ====================================================== */
 
-        .shell {
+        ::-webkit-scrollbar {
 
-            width: 100%;
+            width: 6px;
 
-            max-width: 1540px;
-
-            margin: auto;
-
-            padding: 14px;
+            height: 6px;
 
         }
 
 
-        /* =========================================================
-           PAINÉIS
-        ========================================================= */
+        ::-webkit-scrollbar-track {
 
-        .panel {
+            background: transparent;
+
+        }
+
+
+        ::-webkit-scrollbar-thumb {
+
+            background: #334155;
+
+            border-radius: 10px;
+
+        }
+
+
+        /* =====================================================
+           CARD PADRÃO
+        ====================================================== */
+
+        .qai-card {
 
             background:
-
-                linear-gradient(
-                    145deg,
-                    rgba(4, 18, 28, 0.98),
-                    rgba(4, 15, 23, 0.96)
-                );
+                rgba(15, 23, 42, 0.82);
 
             border:
+                1px solid rgba(51, 65, 85, 0.65);
 
-                1px solid
-                rgba(45, 112, 143, 0.66);
-
-            border-radius: 20px;
+            border-radius: 16px;
 
             box-shadow:
-
-                inset 0 0 26px
-                rgba(0, 0, 0, 0.18),
-
-                0 12px 32px
-                rgba(0, 0, 0, 0.15);
+                0 8px 25px rgba(0,0,0,0.12);
 
         }
 
 
-        /* =========================================================
-           HEADER
-        ========================================================= */
+        /* =====================================================
+           CARD SENSOR
+        ====================================================== */
 
-        .topbar {
+        .sensor-card {
 
-            min-height: 128px;
+            min-height: 118px;
 
-            display: grid;
+            transition:
+                transform 0.2s ease,
+                border-color 0.2s ease;
 
-            grid-template-columns:
-                290px
-                1fr
-                250px
-                270px;
+        }
+
+
+        .sensor-card:hover {
+
+            transform: translateY(-2px);
+
+        }
+
+
+        /* =====================================================
+           STATUS
+        ====================================================== */
+
+        .status-badge {
+
+            display: inline-flex;
 
             align-items: center;
 
-            gap: 20px;
+            width: fit-content;
 
-            padding: 20px 26px;
+            padding: 3px 8px;
 
-        }
+            border-radius: 6px;
 
+            font-size: 9px;
 
-        /* =========================================================
-           LOGO
-        ========================================================= */
-
-        .brand {
-
-            font-size: 64px;
-
-            line-height: 0.9;
+            line-height: 1;
 
             font-weight: 900;
-
-            letter-spacing: -4px;
-
-        }
-
-
-        .brand .leaf {
-
-            color: var(--green);
-
-            font-size: 36px;
-
-            vertical-align: top;
-
-            margin-left: 3px;
-
-        }
-
-
-        .brand small {
-
-            font-size: 22px;
-
-            color: var(--cyan);
-
-            letter-spacing: 0;
-
-            margin-left: 5px;
-
-        }
-
-
-        /* =========================================================
-           HEADER DIVISORES
-        ========================================================= */
-
-        .divider {
-
-            border-left:
-
-                1px solid
-                #547181;
-
-            padding-left: 26px;
-
-        }
-
-
-        .title {
-
-            font-size: 29px;
-
-            font-weight: 850;
-
-            letter-spacing: 1px;
-
-        }
-
-
-        .subtitle {
-
-            font-size: 20px;
-
-            color: #93afc3;
-
-            letter-spacing: 1px;
-
-            margin-top: 5px;
-
-        }
-
-
-        /* =========================================================
-           ONLINE
-        ========================================================= */
-
-        .online {
-
-            color: var(--green);
-
-            font-size: 27px;
-
-            font-weight: 850;
-
-        }
-
-
-        .signal {
-
-            font-size: 18px;
-
-            margin-top: 6px;
-
-            color: #d7e4ec;
-
-        }
-
-
-        /* =========================================================
-           DATA
-        ========================================================= */
-
-        .clock {
-
-            font-size: 24px;
-
-            line-height: 1.4;
-
-        }
-
-
-        /* =========================================================
-           GRID PRINCIPAL
-        ========================================================= */
-
-        .main {
-
-            display: grid;
-
-            grid-template-columns:
-                370px
-                1.15fr
-                1fr;
-
-            gap: 14px;
-
-            margin-top: 14px;
-
-        }
-
-
-        .leftcol {
-
-            display: grid;
-
-            gap: 14px;
-
-            grid-template-rows:
-                310px
-                190px;
-
-        }
-
-
-        .rightcol {
-
-            display: grid;
-
-            gap: 14px;
-
-            grid-template-rows:
-                210px
-                1fr;
-
-        }
-
-
-        .pad {
-
-            padding: 22px 25px;
-
-        }
-
-
-        /* =========================================================
-           TÍTULOS
-        ========================================================= */
-
-        .section-title {
-
-            color: var(--cyan);
-
-            font-size: 21px;
-
-            font-weight: 850;
-
-            letter-spacing: 0.5px;
-
-            margin-bottom: 18px;
-
-        }
-
-
-        /* =========================================================
-           PILARES
-        ========================================================= */
-
-        .pillar {
-
-            display: grid;
-
-            grid-template-columns:
-                1fr
-                70px;
-
-            align-items: center;
-
-            padding: 10px 0;
-
-            border-bottom:
-
-                1px solid
-                rgba(76, 117, 136, 0.5);
-
-        }
-
-
-        .pillar:last-child {
-
-            border-bottom: 0;
-
-        }
-
-
-        .pillar-name {
-
-            font-size: 18px;
-
-        }
-
-
-        .pillar-score {
-
-            font-size: 34px;
-
-            font-weight: 850;
-
-            text-align: right;
-
-        }
-
-
-        .bar {
-
-            height: 12px;
-
-            width: 168px;
-
-            margin-top: 8px;
-
-            background: #102b3a;
-
-            border-radius: 20px;
-
-            overflow: hidden;
-
-        }
-
-
-        .bar > i {
-
-            display: block;
-
-            height: 100%;
-
-            border-radius: 20px;
-
-        }
-
-
-        /* =========================================================
-           AMBIENTE
-        ========================================================= */
-
-        .env-grid {
-
-            display: grid;
-
-            grid-template-columns:
-                1fr
-                1fr;
-
-            gap: 10px 18px;
-
-        }
-
-
-        .env-label {
-
-            font-size: 13px;
-
-            color: #b7cad7;
 
             text-transform: uppercase;
 
-            margin-top: 5px;
+            letter-spacing: 0.04em;
 
         }
 
 
-        .env-value {
+        /* =====================================================
+           SCORE
+        ====================================================== */
 
-            font-size: 42px;
+        .score-circle {
 
-            font-weight: 850;
+            width: 66px;
 
-            line-height: 1;
+            height: 66px;
 
-        }
+            min-width: 66px;
 
+            border-radius: 50%;
 
-        /* =========================================================
-           VELOCÍMETRO
-        ========================================================= */
-
-        .gauge-panel {
-
-            position: relative;
-
-            min-height: 514px;
-
-            padding: 16px;
+            border-width: 4px;
 
             display: flex;
 
-            align-items: center;
+            flex-direction: column;
 
             justify-content: center;
 
-            overflow: hidden;
-
-        }
-
-
-        .gauge-wrap {
-
-            width: min(100%, 590px);
-
-            text-align: center;
-
-        }
-
-
-        .gauge {
-
-            width: 520px;
-
-            max-width: 95%;
-
-            aspect-ratio: 2 / 1;
-
-            margin: 0 auto;
-
-            position: relative;
-
-            overflow: hidden;
-
-        }
-
-
-        /* ARCO */
-
-        .gauge-ring {
-
-            position: absolute;
-
-            left: 0;
-
-            right: 0;
-
-            top: 0;
-
-            margin: auto;
-
-            width: 100%;
-
-            aspect-ratio: 1 / 1;
-
-            border-radius: 50%;
-
-            background:
-
-                conic-gradient(
-
-                    from 270deg,
-
-                    #20c52c 0deg,
-
-                    #59dd10 45deg,
-
-                    #d8ed00 80deg,
-
-                    #ffd400 105deg,
-
-                    #ff9d00 135deg,
-
-                    #ff4b16 160deg,
-
-                    #ff172e 180deg,
-
-                    transparent 180deg,
-
-                    transparent 360deg
-
-                );
-
-            filter:
-
-                drop-shadow(
-                    0 0 10px
-                    rgba(255, 215, 0, 0.35)
-                );
-
-        }
-
-
-        /* INTERIOR DO VELOCÍMETRO */
-
-        .gauge-ring::after {
-
-            content: "";
-
-            position: absolute;
-
-            inset: 8%;
-
-            border-radius: 50%;
-
-            background:
-
-                radial-gradient(
-
-                    circle,
-
-                    #06131d 58%,
-
-                    #031019 72%
-
-                );
-
-        }
-
-
-        /* CONTEÚDO CENTRAL */
-
-        .gauge-content {
-
-            position: absolute;
-
-            left: 0;
-
-            right: 0;
-
-            top: 76px;
-
-            z-index: 2;
-
-            text-align: center;
-
-        }
-
-
-        .qai-label {
-
-            font-size: 34px;
-
-            font-weight: 850;
-
-        }
-
-
-        .score {
-
-            font-size: 145px;
-
-            line-height: 0.9;
-
-            font-weight: 950;
-
-            text-shadow:
-
-                0 5px 14px
-                #000;
-
-        }
-
-
-        .status-pill {
-
-            display: inline-block;
-
-            min-width: 260px;
-
-            padding:
-
-                8px
-                24px;
-
-            border-radius: 15px;
-
-            font-size: 32px;
-
-            font-weight: 950;
-
-            color: #071018;
-
-            margin-top: 8px;
-
-        }
-
-
-        .gauge-desc {
-
-            color: #a8c4d8;
-
-            font-size: 20px;
-
-            line-height: 1.4;
-
-            margin-top: 12px;
-
-        }
-
-
-        /* =========================================================
-           ALERTA
-        ========================================================= */
-
-        .alert-title {
-
-            font-size: 27px;
-
-            font-weight: 900;
-
-            margin-bottom: 12px;
-
-        }
-
-
-        .alert-text {
-
-            font-size: 19px;
-
-            line-height: 1.55;
-
-            color: #f1f5f9;
-
-        }
-
-
-        /* =========================================================
-           RECOMENDAÇÕES
-        ========================================================= */
-
-        .recommendations ul {
-
-            margin:
-
-                8px
-                0
-                0;
-
-            padding-left: 25px;
-
-        }
-
-
-        .recommendations li {
-
-            font-size: 18px;
-
-            line-height: 1.65;
-
-            padding-left: 4px;
-
-        }
-
-
-        .recommendations li::marker {
-
-            color: var(--cyan);
-
-        }
-
-
-        /* =========================================================
-           CARDS DOS SENSORES
-        ========================================================= */
-
-        .metrics {
-
-            display: grid;
-
-            grid-template-columns:
-                1fr
-                1fr
-                1fr;
-
-            gap: 14px;
-
-            margin-top: 14px;
-
-        }
-
-
-        .metric {
-
-            min-height: 202px;
-
-            padding: 20px 28px;
-
-            position: relative;
-
-        }
-
-
-        .metric-title {
-
-            font-size: 22px;
-
-            font-weight: 850;
-
-        }
-
-
-        .metric-value {
-
-            font-size: 60px;
-
-            font-weight: 900;
-
-            line-height: 1;
-
-            margin-top: 4px;
-
-        }
-
-
-        .metric-unit {
-
-            font-size: 18px;
-
-            color: #c5d4df;
-
-        }
-
-
-        .metric-state {
-
-            position: absolute;
-
-            right: 28px;
-
-            top: 48px;
-
-            font-size: 17px;
-
-            line-height: 1.7;
-
-            font-weight: 850;
-
-            text-align: center;
-
-        }
-
-
-        /* =========================================================
-           ESCALA DOS SENSORES
-        ========================================================= */
-
-        .scale {
-
-            position: absolute;
-
-            left: 28px;
-
-            right: 28px;
-
-            bottom: 37px;
-
-            height: 10px;
-
-            border-radius: 20px;
-
-            background:
-
-                linear-gradient(
-
-                    90deg,
-
-                    #35c719,
-
-                    #e7f10d 38%,
-
-                    #ffbd00 55%,
-
-                    #ff3b13 78%,
-
-                    #f50036
-
-                );
-
-        }
-
-
-        .marker {
-
-            position: absolute;
-
-            top: -10px;
-
-            width: 0;
-
-            height: 0;
-
-            border-left:
-
-                8px solid
-                transparent;
-
-            border-right:
-
-                8px solid
-                transparent;
-
-            border-top:
-
-                14px solid
-                white;
-
-            transform:
-
-                translateX(-50%);
-
-        }
-
-
-        .scale-labels {
-
-            position: absolute;
-
-            left: 28px;
-
-            right: 28px;
-
-            bottom: 10px;
-
-            display: flex;
-
-            justify-content: space-between;
-
-            color: #c6d5df;
-
-            font-size: 14px;
-
-        }
-
-
-        /* =========================================================
-           RODAPÉ
-        ========================================================= */
-
-        .footer {
-
-            margin-top: 14px;
-
-            min-height: 120px;
-
-            padding:
-
-                18px
-                30px;
-
-            display: grid;
-
-            grid-template-columns:
-
-                repeat(4, 1fr)
-                250px;
-
-            gap: 12px;
-
             align-items: center;
 
         }
 
 
-        .tip {
+        /* =====================================================
+           PULSO ONLINE
+        ====================================================== */
 
-            border-right:
+        @keyframes qaiPulse {
 
-                1px solid
-                #426173;
+            0%, 100% {
 
-            padding:
-
-                0
-                18px;
-
-        }
-
-
-        .tip b {
-
-            display: block;
-
-            font-size: 18px;
-
-            margin-bottom: 6px;
-
-        }
-
-
-        .tip span {
-
-            font-size: 15px;
-
-            line-height: 1.45;
-
-            color: #c5d4df;
-
-        }
-
-
-        /* =========================================================
-           QR
-        ========================================================= */
-
-        .qr {
-
-            text-align: center;
-
-            font-size: 13px;
-
-            color: #b9cedb;
-
-        }
-
-
-        .qrbox {
-
-            display: inline-grid;
-
-            place-items: center;
-
-            width: 68px;
-
-            height: 68px;
-
-            margin-right: 10px;
-
-            background: white;
-
-            color: black;
-
-            font-weight: 900;
-
-            border-radius: 5px;
-
-        }
-
-
-        /* =========================================================
-           RESPONSIVO
-        ========================================================= */
-
-        @media(max-width: 1100px) {
-
-            .topbar {
-
-                grid-template-columns:
-                    1fr
-                    1fr;
+                opacity: 1;
 
             }
 
+            50% {
 
-            .main {
-
-                grid-template-columns:
-                    1fr;
-
-            }
-
-
-            .leftcol,
-            .rightcol {
-
-                grid-template-rows:
-                    auto;
-
-            }
-
-
-            .metrics {
-
-                grid-template-columns:
-                    1fr;
-
-            }
-
-
-            .footer {
-
-                grid-template-columns:
-                    1fr
-                    1fr;
-
-            }
-
-
-            .gauge-panel {
-
-                min-height: 500px;
+                opacity: 0.35;
 
             }
 
         }
 
 
-        @media(max-width: 650px) {
+        .online-dot {
 
-            .topbar {
+            width: 8px;
 
-                grid-template-columns:
-                    1fr;
+            height: 8px;
 
-            }
+            border-radius: 50%;
 
+            background: #22c55e;
 
-            .divider {
+            animation:
+                qaiPulse 1.7s infinite;
 
-                border-left: 0;
-
-                padding-left: 0;
-
-            }
+        }
 
 
-            .brand {
+        /* =====================================================
+           MOBILE
+        ====================================================== */
 
-                font-size: 48px;
+        @media(max-width: 640px) {
 
-            }
+            body {
 
-
-            .title {
-
-                font-size: 22px;
+                padding: 8px !important;
 
             }
 
 
-            .score {
+            .qai-card {
 
-                font-size: 105px;
-
-            }
-
-
-            .footer {
-
-                grid-template-columns:
-                    1fr;
+                border-radius: 13px;
 
             }
 
 
-            .tip {
+            .sensor-card {
 
-                border-right: 0;
+                min-height: 105px;
 
-                border-bottom:
+            }
 
-                    1px solid
-                    #426173;
 
-                padding: 12px;
+            .score-circle {
+
+                width: 58px;
+
+                height: 58px;
+
+                min-width: 58px;
 
             }
 
@@ -1156,81 +334,242 @@
 </head>
 
 
-<body>
+
+<body
+    class="
+        text-slate-100
+        antialiased
+        p-3
+        sm:p-4
+        lg:p-5
+    "
+>
 
 
-<div class="shell">
+<!-- =========================================================
+     CONTAINER PRINCIPAL
+========================================================= -->
+
+<div
+    class="
+        max-w-[1440px]
+        mx-auto
+        space-y-3
+        sm:space-y-4
+    "
+>
+
 
 
     <!-- =====================================================
          HEADER
     ====================================================== -->
 
-    <header class="panel topbar">
+    <header
+        class="
+            qai-card
+            px-4
+            py-3
+            sm:px-5
+            sm:py-4
+        "
+    >
 
-
-        <!-- LOGO -->
-
-        <div class="brand">
-
-            QAI
-
-            <span class="leaf">◆</span>
-
-            <small>LIGHT</small>
-
-        </div>
-
-
-        <!-- TÍTULO -->
-
-        <div class="divider">
-
-            <div class="title">
-
-                QUALIDADE DO AR INTERNO
-
-            </div>
-
-            <div class="subtitle">
-
-                MONITORAMENTO INTELIGENTE
-
-            </div>
-
-        </div>
-
-
-        <!-- ONLINE -->
-
-        <div class="divider">
-
-            <div class="online">
-
-                ◉ ONLINE
-
-            </div>
-
-            <div
-                class="signal"
-                id="signalInfo"
-            >
-
-                Monitor conectado
-
-            </div>
-
-        </div>
-
-
-        <!-- DATA / HORA -->
 
         <div
-            class="divider clock"
-            id="deviceInfo"
+            class="
+                flex
+                flex-col
+                lg:flex-row
+                lg:items-center
+                lg:justify-between
+                gap-3
+            "
         >
 
-            Carregando...
+
+            <!-- MARCA -->
+
+            <div
+                class="
+                    flex
+                    items-center
+                    gap-3
+                "
+            >
+
+
+                <div
+                    class="
+                        w-10
+                        h-10
+                        rounded-xl
+                        bg-sky-500/10
+                        border
+                        border-sky-500/20
+                        flex
+                        items-center
+                        justify-center
+                        shrink-0
+                    "
+                >
+
+                    <span
+                        class="
+                            text-sky-400
+                            font-black
+                            text-sm
+                        "
+                    >
+                        QAI
+                    </span>
+
+                </div>
+
+
+                <div>
+
+                    <div
+                        class="
+                            flex
+                            flex-wrap
+                            items-center
+                            gap-2
+                        "
+                    >
+
+                        <h1
+                            class="
+                                text-sm
+                                sm:text-base
+                                font-black
+                                uppercase
+                                tracking-tight
+                                text-white
+                            "
+                        >
+
+                            Inteligência Ambiental
+                            & Qualidade do Ar
+
+                        </h1>
+
+
+                        <div
+                            class="
+                                flex
+                                items-center
+                                gap-1.5
+                                text-[9px]
+                                font-black
+                                text-emerald-400
+                                uppercase
+                            "
+                        >
+
+                            <span class="online-dot"></span>
+
+                            Online
+
+                        </div>
+
+                    </div>
+
+
+                    <p
+                        class="
+                            text-[10px]
+                            sm:text-[11px]
+                            text-slate-500
+                            mt-1
+                        "
+                    >
+
+                        Monitoramento contínuo •
+                        Interpretação inteligente •
+                        Recomendações ambientais
+
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- TELEMETRIA -->
+
+            <div
+                class="
+                    flex
+                    flex-wrap
+                    items-center
+                    gap-x-4
+                    gap-y-2
+                    text-[9px]
+                    sm:text-[10px]
+                    font-bold
+                    text-slate-500
+                "
+            >
+
+
+                <span>
+
+                    DISPOSITIVO:
+
+                    <strong
+                        id="txtDeviceId"
+                        class="
+                            text-slate-200
+                            ml-1
+                        "
+                    >
+                        --
+                    </strong>
+
+                </span>
+
+
+                <span>
+
+                    WI-FI:
+
+                    <strong
+                        id="txtSignal"
+                        class="
+                            text-slate-200
+                            ml-1
+                        "
+                    >
+                        -- dBm
+                    </strong>
+
+                </span>
+
+
+                <span
+                    id="txtTimestamp"
+                    class="
+                        text-emerald-400
+                    "
+                >
+
+                    --:--:--
+
+                </span>
+
+
+                <!-- COMPATIBILIDADE -->
+
+                <span
+                    id="txtDataAtual"
+                    class="hidden"
+                ></span>
+
+
+            </div>
+
 
         </div>
 
@@ -1240,85 +579,857 @@
 
 
     <!-- =====================================================
-         ÁREA PRINCIPAL
+         SCORE + STATUS
     ====================================================== -->
 
-    <section class="main">
+    <section
+        class="
+            grid
+            grid-cols-1
+            md:grid-cols-12
+            gap-3
+        "
+    >
 
 
-        <!-- =================================================
-             COLUNA ESQUERDA
-        ================================================== -->
+        <!-- SCORE -->
 
-        <div class="leftcol">
-
-
-            <!-- PILARES -->
-
-            <div class="panel pad">
-
-                <div class="section-title">
-
-                    ▥ &nbsp; PILARES QAI
-
-                </div>
+        <div
+            class="
+                qai-card
+                md:col-span-5
+                p-4
+                flex
+                items-center
+                gap-4
+            "
+        >
 
 
-                <div id="pillars">
+            <div
+                id="scoreContainer"
+                class="
+                    score-circle
+                    border-emerald-500
+                    bg-emerald-500/5
+                "
+            >
 
-                    Carregando...
 
-                </div>
+                <span
+                    id="lblScoreNumero"
+                    class="
+                        text-2xl
+                        font-black
+                        tracking-tighter
+                        text-white
+                        leading-none
+                    "
+                >
+
+                    --
+
+                </span>
+
+
+                <span
+                    class="
+                        text-[7px]
+                        font-black
+                        text-slate-500
+                        tracking-widest
+                        mt-1
+                    "
+                >
+
+                    QAI
+
+                </span>
+
 
             </div>
 
 
 
-            <!-- AMBIENTE -->
+            <div class="flex-1 min-w-0">
 
-            <div class="panel pad">
 
-                <div class="section-title">
+                <div
+                    class="
+                        flex
+                        justify-between
+                        items-center
+                        gap-2
+                        mb-2
+                    "
+                >
 
-                    🌿 &nbsp; AMBIENTE
+
+                    <span
+                        class="
+                            text-[9px]
+                            sm:text-[10px]
+                            font-black
+                            text-slate-500
+                            uppercase
+                            tracking-wider
+                        "
+                    >
+
+                        Qualidade do Ambiente
+
+                    </span>
+
+
+                    <span
+                        id="lblScoreStatus"
+                        class="
+                            text-[9px]
+                            sm:text-[10px]
+                            font-black
+                            text-emerald-500
+                            uppercase
+                        "
+                    >
+
+                        ANALISANDO...
+
+                    </span>
+
+
+                </div>
+
+
+
+                <div
+                    class="
+                        w-full
+                        h-2
+                        bg-slate-800
+                        rounded-full
+                        overflow-hidden
+                    "
+                >
+
+
+                    <div
+                        id="barScoreProgresso"
+                        class="
+                            h-full
+                            bg-emerald-500
+                            transition-all
+                            duration-700
+                        "
+                        style="width:0%"
+                    ></div>
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- STATUS GERAL -->
+
+        <div
+            id="panelStatusGeral"
+            class="
+                qai-card
+                md:col-span-7
+                min-h-[76px]
+                px-4
+                py-3
+                flex
+                items-center
+            "
+        >
+
+
+            <div
+                class="
+                    flex
+                    items-center
+                    gap-3
+                "
+            >
+
+
+                <div
+                    class="
+                        w-8
+                        h-8
+                        rounded-lg
+                        bg-slate-800
+                        flex
+                        items-center
+                        justify-center
+                        shrink-0
+                    "
+                >
+
+                    ⚠️
 
                 </div>
 
 
                 <div
-                    class="env-grid"
-                    id="environmentMini"
+                    id="txtStatusGeral"
+                    class="
+                        text-[10px]
+                        sm:text-xs
+                        font-black
+                        uppercase
+                        tracking-wider
+                        text-slate-400
+                    "
                 >
 
-                    Carregando...
+                    Iniciando varredura ambiental...
 
                 </div>
+
 
             </div>
 
 
         </div>
+
+
+    </section>
+
+
+
+    <!-- =====================================================
+         CORPO PRINCIPAL
+    ====================================================== -->
+
+    <div
+        class="
+            grid
+            grid-cols-1
+            lg:grid-cols-12
+            gap-3
+            sm:gap-4
+        "
+    >
 
 
 
         <!-- =================================================
-             VELOCÍMETRO CENTRAL
+             COLUNA PRINCIPAL
         ================================================== -->
 
-        <div class="panel gauge-panel">
+        <main
+            class="
+                lg:col-span-8
+                space-y-3
+                sm:space-y-4
+            "
+        >
 
 
-            <div
-                id="scoreCard"
-                class="gauge-wrap"
+
+            <!-- =================================================
+                 CARDS PRINCIPAIS
+
+                 MOBILE = 2 COLUNAS
+                 TABLET/DESKTOP = 4 COLUNAS
+            ================================================== -->
+
+            <section
+                class="
+                    grid
+                    grid-cols-2
+                    md:grid-cols-4
+                    gap-2
+                    sm:gap-3
+                "
             >
 
-                Carregando QAI...
-
-            </div>
 
 
-        </div>
+                <!-- TEMPERATURA -->
+
+                <article
+                    id="cardTemp"
+                    class="
+                        qai-card
+                        sensor-card
+                        border-2
+                        border-transparent
+                        p-3
+                        sm:p-4
+                        flex
+                        flex-col
+                        justify-between
+                    "
+                >
+
+
+                    <div>
+
+
+                        <div
+                            class="
+                                flex
+                                justify-between
+                                gap-1
+                            "
+                        >
+
+
+                            <span
+                                class="
+                                    text-[9px]
+                                    sm:text-[10px]
+                                    font-bold
+                                    text-slate-400
+                                    uppercase
+                                "
+                            >
+
+                                🌡️ Temperatura
+
+                            </span>
+
+
+                            <span
+                                class="
+                                    hidden
+                                    sm:block
+                                    text-[8px]
+                                    text-slate-600
+                                    font-mono
+                                "
+                            >
+
+                                21–24°C
+
+                            </span>
+
+
+                        </div>
+
+
+
+                        <div
+                            id="valTemperature"
+                            class="
+                                text-2xl
+                                sm:text-3xl
+                                font-black
+                                tracking-tighter
+                                text-white
+                                mt-3
+                            "
+                        >
+
+                            --.-
+
+                        </div>
+
+
+                    </div>
+
+
+                    <div
+                        id="statusTemp"
+                        class="status-badge bg-slate-800 text-slate-400"
+                    >
+
+                        ANALISANDO
+
+                    </div>
+
+
+                </article>
+
+
+
+                <!-- UMIDADE -->
+
+                <article
+                    id="cardHum"
+                    class="
+                        qai-card
+                        sensor-card
+                        border-2
+                        border-transparent
+                        p-3
+                        sm:p-4
+                        flex
+                        flex-col
+                        justify-between
+                    "
+                >
+
+
+                    <div>
+
+
+                        <div
+                            class="
+                                flex
+                                justify-between
+                                gap-1
+                            "
+                        >
+
+
+                            <span
+                                class="
+                                    text-[9px]
+                                    sm:text-[10px]
+                                    font-bold
+                                    text-slate-400
+                                    uppercase
+                                "
+                            >
+
+                                💧 Umidade
+
+                            </span>
+
+
+                            <span
+                                class="
+                                    hidden
+                                    sm:block
+                                    text-[8px]
+                                    text-slate-600
+                                    font-mono
+                                "
+                            >
+
+                                40–60%
+
+                            </span>
+
+
+                        </div>
+
+
+                        <div
+                            id="valHumidity"
+                            class="
+                                text-2xl
+                                sm:text-3xl
+                                font-black
+                                tracking-tighter
+                                text-white
+                                mt-3
+                            "
+                        >
+
+                            --.-
+
+                        </div>
+
+
+                    </div>
+
+
+                    <div
+                        id="statusHum"
+                        class="status-badge bg-slate-800 text-slate-400"
+                    >
+
+                        ANALISANDO
+
+                    </div>
+
+
+                </article>
+
+
+
+                <!-- CO2 -->
+
+                <article
+                    id="cardCO2"
+                    class="
+                        qai-card
+                        sensor-card
+                        border-2
+                        border-transparent
+                        p-3
+                        sm:p-4
+                        flex
+                        flex-col
+                        justify-between
+                    "
+                >
+
+
+                    <div>
+
+
+                        <div
+                            class="
+                                flex
+                                justify-between
+                                gap-1
+                            "
+                        >
+
+
+                            <span
+                                class="
+                                    text-[9px]
+                                    sm:text-[10px]
+                                    font-bold
+                                    text-slate-400
+                                    uppercase
+                                "
+                            >
+
+                                🍃 CO₂
+
+                            </span>
+
+
+                            <span
+                                class="
+                                    hidden
+                                    sm:block
+                                    text-[8px]
+                                    text-slate-600
+                                    font-mono
+                                "
+                            >
+
+                                Ventilação
+
+                            </span>
+
+
+                        </div>
+
+
+                        <div
+                            id="valCO2"
+                            class="
+                                text-2xl
+                                sm:text-3xl
+                                font-black
+                                tracking-tighter
+                                text-white
+                                mt-3
+                            "
+                        >
+
+                            ----
+
+                        </div>
+
+
+                    </div>
+
+
+                    <div
+                        id="statusCO2"
+                        class="status-badge bg-slate-800 text-slate-400"
+                    >
+
+                        ANALISANDO
+
+                    </div>
+
+
+                </article>
+
+
+
+                <!-- PONTO DE ORVALHO -->
+
+                <article
+                    id="cardOrvalho"
+                    class="
+                        qai-card
+                        sensor-card
+                        border-2
+                        border-transparent
+                        p-3
+                        sm:p-4
+                        flex
+                        flex-col
+                        justify-between
+                    "
+                >
+
+
+                    <div>
+
+
+                        <span
+                            class="
+                                text-[9px]
+                                sm:text-[10px]
+                                font-bold
+                                text-slate-400
+                                uppercase
+                            "
+                        >
+
+                            💦 Ponto de Orvalho
+
+                        </span>
+
+
+                        <div
+                            id="valPontoOrvalho"
+                            class="
+                                text-2xl
+                                sm:text-3xl
+                                font-black
+                                tracking-tighter
+                                text-white
+                                mt-3
+                            "
+                        >
+
+                            --.-
+
+                        </div>
+
+
+                    </div>
+
+
+                    <div
+                        id="statusOrvalho"
+                        class="status-badge bg-slate-800 text-slate-400"
+                    >
+
+                        ANALISANDO
+
+                    </div>
+
+
+                </article>
+
+
+            </section>
+
+
+
+            <!-- =================================================
+                 PARTÍCULAS
+            ================================================== -->
+
+            <section
+                class="
+                    qai-card
+                    p-4
+                    sm:p-5
+                "
+            >
+
+
+                <div
+                    id="panelTriagemMassaQuantidade"
+                >
+
+
+                    <div
+                        class="
+                            text-[10px]
+                            text-slate-500
+                        "
+                    >
+
+                        Carregando análise física
+                        de partículas...
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- ALERTA CRÍTICO -->
+
+                <div
+                    id="alertaInfoCritico"
+                    class="
+                        hidden
+                        mt-4
+                        p-3
+                        rounded-xl
+                        bg-rose-500/10
+                        border
+                        border-rose-500/20
+                        text-[10px]
+                        sm:text-[11px]
+                        text-rose-400
+                        leading-relaxed
+                    "
+                >
+
+                    ⚠️
+
+                    <strong>
+                        Alerta de qualidade ambiental:
+                    </strong>
+
+                    níveis críticos detectados.
+                    Recomenda-se verificar a ventilação
+                    e possíveis fontes de emissão.
+
+                </div>
+
+
+
+                <!-- AJUDA -->
+
+                <div
+                    class="
+                        mt-4
+                        pt-4
+                        border-t
+                        border-slate-800
+                    "
+                >
+
+
+                    <div
+                        class="
+                            flex
+                            flex-wrap
+                            gap-2
+                        "
+                    >
+
+
+                        <button
+                            onclick="
+                                document
+                                .getElementById('helpParticulas')
+                                .classList
+                                .toggle('hidden')
+                            "
+                            class="
+                                px-3
+                                py-1.5
+                                rounded-lg
+                                bg-slate-800
+                                text-[9px]
+                                sm:text-[10px]
+                                font-bold
+                                text-slate-300
+                                hover:bg-slate-700
+                            "
+                        >
+
+                            💡 Entendimento de Partículas
+
+                        </button>
+
+
+
+                        <button
+                            onclick="
+                                document
+                                .getElementById('helpOrvalho')
+                                .classList
+                                .toggle('hidden')
+                            "
+                            class="
+                                px-3
+                                py-1.5
+                                rounded-lg
+                                bg-slate-800
+                                text-[9px]
+                                sm:text-[10px]
+                                font-bold
+                                text-slate-300
+                                hover:bg-slate-700
+                            "
+                        >
+
+                            💧 Ponto de Orvalho
+
+                        </button>
+
+
+                    </div>
+
+
+
+                    <!-- HELP PARTÍCULAS -->
+
+                    <div
+                        id="helpParticulas"
+                        class="
+                            hidden
+                            mt-3
+                            p-3
+                            bg-slate-950/50
+                            border
+                            border-slate-800
+                            rounded-xl
+                            text-[10px]
+                            text-slate-400
+                            leading-relaxed
+                        "
+                    >
+
+                        A massa representa a quantidade
+                        total de partículas presentes no ar.
+
+                        A contagem mostra quantas partículas
+                        estão suspensas.
+
+                        As duas informações se complementam
+                        para oferecer uma visão mais completa
+                        da qualidade ambiental.
+
+                    </div>
+
+
+
+                    <!-- HELP ORVALHO -->
+
+                    <div
+                        id="helpOrvalho"
+                        class="
+                            hidden
+                            mt-3
+                            p-3
+                            bg-slate-950/50
+                            border
+                            border-slate-800
+                            rounded-xl
+                            text-[10px]
+                            text-slate-400
+                            leading-relaxed
+                        "
+                    >
+
+                        O ponto de orvalho representa a
+                        temperatura na qual o vapor de água
+                        começa a condensar.
+
+                        Quando a temperatura das superfícies
+                        se aproxima desse valor, aumenta o
+                        risco de condensação e umidade.
+
+                    </div>
+
+
+                </div>
+
+
+            </section>
+
+
+        </main>
 
 
 
@@ -1326,53 +1437,370 @@
              COLUNA DIREITA
         ================================================== -->
 
-        <div class="rightcol">
+        <aside
+            class="
+                lg:col-span-4
+                space-y-3
+                sm:space-y-4
+            "
+        >
 
 
-            <!-- ALERTAS -->
 
-            <div
-                id="alertsCard"
-                class="panel pad"
+            <!-- =================================================
+                 CONFORTO AMBIENTAL
+            ================================================== -->
+
+            <section
+                class="
+                    qai-card
+                    p-4
+                "
             >
 
-                Carregando análise...
 
-            </div>
-
+                <div class="mb-4">
 
 
-            <!-- RECOMENDAÇÕES -->
+                    <h2
+                        class="
+                            text-[10px]
+                            font-black
+                            text-slate-300
+                            uppercase
+                            tracking-wider
+                        "
+                    >
 
-            <div
-                id="mitigationCard"
-                class="panel pad recommendations"
-            >
+                        🫁 Indicador de Conforto Ambiental
 
-                Carregando recomendações...
-
-            </div>
-
-
-        </div>
-
-
-    </section>
+                    </h2>
 
 
+                    <p
+                        class="
+                            text-[9px]
+                            sm:text-[10px]
+                            text-slate-500
+                            mt-1
+                            leading-relaxed
+                        "
+                    >
 
-    <!-- =====================================================
-         CO2 / PM2.5 / PM10
-    ====================================================== -->
+                        Estimativa de como as condições
+                        ambientais podem ser percebidas
+                        pelos ocupantes.
 
-    <section
-        id="cards"
-        class="metrics"
-    >
+                    </p>
 
-        Carregando sensores...
 
-    </section>
+                </div>
+
+
+
+                <div class="space-y-4">
+
+
+                    <!-- FADIGA -->
+
+                    <div>
+
+
+                        <div
+                            class="
+                                flex
+                                justify-between
+                                items-center
+                                gap-2
+                                mb-1.5
+                            "
+                        >
+
+
+                            <span
+                                class="
+                                    text-[10px]
+                                    font-semibold
+                                    text-slate-300
+                                "
+                            >
+
+                                <span id="icoSintomaFadiga">
+                                    💤
+                                </span>
+
+                                Fadiga & Sonolência
+
+                            </span>
+
+
+                            <span
+                                id="txtPctFadiga"
+                                class="
+                                    text-[9px]
+                                    font-mono
+                                    text-slate-500
+                                "
+                            >
+
+                                0%
+
+                            </span>
+
+
+                        </div>
+
+
+                        <div
+                            class="
+                                h-1.5
+                                bg-slate-800
+                                rounded-full
+                                overflow-hidden
+                            "
+                        >
+
+
+                            <div
+                                id="barSintomaFadiga"
+                                class="
+                                    h-full
+                                    bg-gradient-to-r
+                                    from-amber-400
+                                    to-rose-500
+                                    transition-all
+                                "
+                                style="width:0%"
+                            ></div>
+
+
+                        </div>
+
+
+                    </div>
+
+
+
+                    <!-- ALERGIA -->
+
+                    <div>
+
+
+                        <div
+                            class="
+                                flex
+                                justify-between
+                                items-center
+                                gap-2
+                                mb-1.5
+                            "
+                        >
+
+
+                            <span
+                                class="
+                                    text-[10px]
+                                    font-semibold
+                                    text-slate-300
+                                "
+                            >
+
+                                <span id="icoSintomaAlergia">
+                                    🤧
+                                </span>
+
+                                Desconforto Alérgico
+
+                            </span>
+
+
+                            <span
+                                id="txtPctAlergia"
+                                class="
+                                    text-[9px]
+                                    font-mono
+                                    text-slate-500
+                                "
+                            >
+
+                                0%
+
+                            </span>
+
+
+                        </div>
+
+
+                        <div
+                            class="
+                                h-1.5
+                                bg-slate-800
+                                rounded-full
+                                overflow-hidden
+                            "
+                        >
+
+
+                            <div
+                                id="barSintomaAlergia"
+                                class="
+                                    h-full
+                                    bg-gradient-to-r
+                                    from-amber-400
+                                    to-rose-500
+                                    transition-all
+                                "
+                                style="width:0%"
+                            ></div>
+
+
+                        </div>
+
+
+                    </div>
+
+
+
+                    <!-- RESPIRATÓRIO -->
+
+                    <div>
+
+
+                        <div
+                            class="
+                                flex
+                                justify-between
+                                items-center
+                                gap-2
+                                mb-1.5
+                            "
+                        >
+
+
+                            <span
+                                class="
+                                    text-[10px]
+                                    font-semibold
+                                    text-slate-300
+                                "
+                            >
+
+                                <span id="icoSintomaDesconforto">
+                                    😮‍💨
+                                </span>
+
+                                Desconforto Respiratório
+
+                            </span>
+
+
+                            <span
+                                id="txtPctDesconforto"
+                                class="
+                                    text-[9px]
+                                    font-mono
+                                    text-slate-500
+                                "
+                            >
+
+                                0%
+
+                            </span>
+
+
+                        </div>
+
+
+                        <div
+                            class="
+                                h-1.5
+                                bg-slate-800
+                                rounded-full
+                                overflow-hidden
+                            "
+                        >
+
+
+                            <div
+                                id="barSintomaDesconforto"
+                                class="
+                                    h-full
+                                    bg-gradient-to-r
+                                    from-amber-400
+                                    to-rose-500
+                                    transition-all
+                                "
+                                style="width:0%"
+                            ></div>
+
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+            </section>
+
+
+
+            <!-- =================================================
+                 RECOMENDAÇÕES
+            ================================================== -->
+
+            <section>
+
+
+                <h2
+                    class="
+                        text-[9px]
+                        font-black
+                        text-slate-500
+                        uppercase
+                        tracking-[0.18em]
+                        ml-1
+                        mb-2
+                    "
+                >
+
+                    Recomendações Ambientais
+
+                </h2>
+
+
+                <div
+                    id="panelTriagem"
+                    class="space-y-3"
+                >
+
+
+                    <div
+                        class="
+                            qai-card
+                            p-4
+                            text-[10px]
+                            text-slate-500
+                        "
+                    >
+
+                        Analisando condições ambientais...
+
+                    </div>
+
+
+                </div>
+
+
+            </section>
+
+
+        </aside>
+
+
+    </div>
 
 
 
@@ -1380,138 +1808,19 @@
          RODAPÉ
     ====================================================== -->
 
-    <footer class="panel footer">
+    <footer
+        class="
+            text-center
+            text-[8px]
+            sm:text-[9px]
+            text-slate-600
+            py-2
+        "
+    >
 
-
-        <!-- VENTILAÇÃO -->
-
-        <div class="tip">
-
-            <b style="color:var(--cyan)">
-
-                💨 VENTILE
-
-            </b>
-
-            <span>
-
-                MELHORE A<br>
-
-                RENOVAÇÃO DO AR
-
-            </span>
-
-        </div>
-
-
-
-        <!-- CONFORTO -->
-
-        <div class="tip">
-
-            <b style="color:var(--orange)">
-
-                🌡 CONFORTO
-
-            </b>
-
-            <span>
-
-                MANTENHA ENTRE<br>
-
-                21°C E 24°C
-
-            </span>
-
-        </div>
-
-
-
-        <!-- UMIDADE -->
-
-        <div class="tip">
-
-            <b style="color:var(--cyan)">
-
-                💧 UMIDADE
-
-            </b>
-
-            <span>
-
-                IDEAL ENTRE<br>
-
-                40% E 60%
-
-            </span>
-
-        </div>
-
-
-
-        <!-- FILTROS -->
-
-        <div class="tip">
-
-            <b style="color:var(--purple)">
-
-                ▦ FILTROS
-
-            </b>
-
-            <span>
-
-                VERIFIQUE E<br>
-
-                LIMPE OS FILTROS
-
-            </span>
-
-        </div>
-
-
-
-        <!-- MARCA -->
-
-        <div class="qr">
-
-            <span class="qrbox">
-
-                QR
-
-            </span>
-
-            <b>
-
-                QAI LIGHT
-
-            </b>
-
-            <br>
-
-            TECNOLOGIA QUE CUIDA DO SEU AR
-
-        </div>
-
+        QAI • Plataforma Inteligente de Qualidade Ambiental Interna
 
     </footer>
-
-
-
-    <!-- =====================================================
-         COMPATIBILIDADE COM O MOTOR ANTIGO
-    ====================================================== -->
-
-    <div
-        id="environmentStatus"
-        style="display:none"
-    ></div>
-
-
-    <div
-        id="statusCard"
-        style="display:none"
-    ></div>
 
 
 </div>
@@ -1519,10 +1828,32 @@
 
 
 <!-- =========================================================
-     SCRIPTS
+     BOTÃO DE TEMA OCULTO
 
-     IMPORTANTE:
-     analysis.js precisa carregar ANTES de script.js
+     Mantido porque seu script atual procura estes IDs.
+========================================================= -->
+
+<button
+    id="btnAlternarTema"
+    class="hidden"
+></button>
+
+<span
+    id="icoTema"
+    class="hidden"
+></span>
+
+<span
+    id="txtTema"
+    class="hidden"
+></span>
+
+
+
+<!-- =========================================================
+     IMPORTANTE
+
+     O ANALYSIS.JS CONTINUA SENDO O MOTOR DE ANÁLISE.
 ========================================================= -->
 
 <script src="analysis.js"></script>
