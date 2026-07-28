@@ -445,6 +445,55 @@
             line-height: 1.2 !important;
         }
 
+    
+        /* =====================================================
+           BANNER DE STATUS — COMPACTO E DISCRETO
+           Remove o grande bloco colorido sem alterar a lógica.
+        ====================================================== */
+        #panelStatusGeral {
+            min-height: 54px !important;
+            padding: 10px 16px !important;
+            border-radius: 12px !important;
+            background: rgba(15, 23, 42, 0.72) !important;
+            box-shadow: none !important;
+            animation: none !important;
+        }
+
+        /* Mantém apenas a borda como indicação de estado */
+        #panelStatusGeral.border-emerald-400,
+        #panelStatusGeral.border-emerald-500 {
+            border-color: rgb(16 185 129) !important;
+        }
+
+        #panelStatusGeral.border-sky-400,
+        #panelStatusGeral.border-sky-500 {
+            border-color: rgb(14 165 233) !important;
+        }
+
+        #panelStatusGeral.border-amber-400,
+        #panelStatusGeral.border-amber-500 {
+            border-color: rgb(245 158 11) !important;
+        }
+
+        #panelStatusGeral.border-rose-500,
+        #panelStatusGeral.border-rose-600 {
+            border-color: rgb(244 63 94) !important;
+        }
+
+        #panelStatusGeral #txtStatusGeral {
+            font-size: 12px !important;
+            line-height: 1.15 !important;
+            color: #ffffff !important;
+        }
+
+        html:not(.dark) #panelStatusGeral {
+            background: rgba(255,255,255,.92) !important;
+        }
+
+        html:not(.dark) #panelStatusGeral #txtStatusGeral {
+            color: #0f172a !important;
+        }
+
     </style>
 
 </head>
