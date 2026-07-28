@@ -1,106 +1,856 @@
 console.log("🚀 Tentando conectar ao Supabase...");
 
-const SUPABASE_URL = 'https://iaylyacrzurcjwvtecpu.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_pkzx4u5U9Xr407syiBE9yA_G7hUvGaw';
+// ======================================================
+// SUPABASE
+// ======================================================
+
+const SUPABASE_URL = "https://iaylyacrzurcjwvtecpu.supabase.co";
+const SUPABASE_ANON_KEY =
+    "sb_publishable_pkzx4u5U9Xr407syiBE9yA_G7hUvGaw";
 
 let supabaseClient = null;
 
+
+// ======================================================
+// INICIALIZAÇÃO
+// ======================================================
+
 window.onload = async () => {
+
     console.log("✅ Página carregada");
 
-    // Correção do case-sensitivity (S minúsculo)
     if (typeof supabase !== "undefined") {
-        supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        supabaseClient = supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_ANON_KEY
+        );
+
         console.log("✅ Supabase Client criado!");
-        
+
         await lerUltimaLeitura();
-        setInterval(lerUltimaLeitura, 15000); // Atualiza a cada 15s
+
+        // Atualiza os dados a cada 15 segundos
+        setInterval(lerUltimaLeitura, 15000);
+
     } else {
-        console.error("❌ Supabase JS não carregou. Verifique o <script> no HTML.");
+
+        console.error(
+            "❌ Supabase JS não carregou. Verifique o <script> no HTML."
+        );
     }
 };
 
+
+// ======================================================
+// BUSCAR ÚLTIMA LEITURA
+// ======================================================
+
 async function lerUltimaLeitura() {
+
     if (!supabaseClient) return;
 
     try {
+
         const { data, error } = await supabaseClient
-            .from('sensor_readings')
-            .select('*')
-            .order('created_at', { ascending: false })
+            .from("sensor_readings")
+            .select("*")
+            .order("created_at", { ascending: false })
             .limit(1)
             .single();
 
         if (error) {
-            console.error("Erro na consulta:", error);
+
+            console.error("❌ Erro na consulta:", error);
             return;
         }
 
-        if (data) {
-            console.log("✅ Última leitura encontrada:", data);
-            
-            // 🌟 CHAMANDO A SUA FUNÇÃO DE ANÁLISE AQUI:
-            const analise = await analyzeEnvironment(data);
-            
-            // 🌟 RENDERIZANDO OS DADOS NO HTML
-            renderizarDashboard(data, analise);
-        } else {
-            console.log("Nenhuma leitura encontrada ainda");
+        if (!data) {
+
+            console.log("Nenhuma leitura encontrada.");
+            return;
         }
+
+        console.log("✅ Última leitura:", data);
+
+        // Motor de análise existente
+        const analise = await analyzeEnvironment(data);
+
+        console.log("📊 Análise:", analise);
+
+        renderizarDashboard(data, analise);
+
     } catch (err) {
-        console.error("Erro ao ler banco:", err);
+
+        console.error("❌ Erro ao ler banco:", err);
     }
 }
 
-// Função auxiliar para injetar os dados analisados nas suas divs do HTML
+
+// ======================================================
+// FUNÇÕES AUXILIARES
+// ======================================================
+
+function numero(valor, fallback = 0) {
+
+    const convertido = Number(valor);
+
+    return Number.isFinite(convertido)
+        ? convertido
+        : fallback;
+}
+
+
+function campo(reading, ...nomes) {
+
+    for (const nome of nomes) {
+
+        if (
+            reading[nome] !== undefined &&
+            reading[nome] !== null
+        ) {
+            return numero(reading[nome]);
+        }
+    }
+
+    return 0;
+}
+
+
+function limitar(valor, minimo, maximo) {
+
+    return Math.min(
+        maximo,
+        Math.max(minimo, valor)
+    );
+}
+
+
+// ======================================================
+// CORES DO STATUS QAI
+// ======================================================
+
+function statusTheme(status) {
+
+    const s = (status || "").toUpperCase();
+
+    if (s === "EXCELENTE") {
+
+        return {
+            cor: "#62d90b",
+            fundo: "#62d90b"
+        };
+    }
+
+    if (s === "BOM") {
+
+        return {
+            cor: "#12bfff",
+            fundo: "#12bfff"
+        };
+    }
+
+    if (s === "ATENÇÃO") {
+
+        return {
+            cor: "#ffd400",
+            fundo: "#ffd400"
+        };
+    }
+
+    return {
+        cor: "#ff3b30",
+        fundo: "#ff3b30"
+    };
+}
+
+
+// ======================================================
+// DESCRIÇÃO DO SCORE
+// ======================================================
+
+function descricaoScore(status) {
+
+    switch ((status || "").toUpperCase()) {
+
+        case "EXCELENTE":
+
+            return `
+                Qualidade do ar excelente.<br>
+                Condições ambientais favoráveis.
+            `;
+
+        case "BOM":
+
+            return `
+                Qualidade do ar boa.<br>
+                Mantenha o monitoramento.
+            `;
+
+        case "ATENÇÃO":
+
+            return `
+                Qualidade do ar regular.<br>
+                Parâmetros requerem atenção.
+            `;
+
+        default:
+
+            return `
+                Qualidade do ar crítica.<br>
+                Ação corretiva recomendada.
+            `;
+    }
+}
+
+
+// ======================================================
+// PILARES QAI
+// ======================================================
+
+function criarPilar(nome, valor, cor) {
+
+    valor = limitar(valor, 0, 100);
+
+    return `
+        <div class="pillar">
+
+            <div>
+
+                <div class="pillar-name">
+                    ${nome}
+                </div>
+
+                <div class="bar">
+
+                    <i
+                        style="
+                            width:${valor}%;
+                            background:${cor};
+                        "
+                    ></i>
+
+                </div>
+
+            </div>
+
+            <div class="pillar-score">
+                ${valor}%
+            </div>
+
+        </div>
+    `;
+}
+
+
+// ======================================================
+// CARD DE SENSOR
+// ======================================================
+
+function criarCardSensor(
+    titulo,
+    valor,
+    unidade,
+    maximo,
+    referencia,
+    cor,
+    estado
+) {
+
+    const posicao = limitar(
+        (valor / maximo) * 100,
+        0,
+        100
+    );
+
+    return `
+
+        <div class="panel metric">
+
+            <div
+                class="metric-title"
+                style="color:${cor}"
+            >
+                ${titulo}
+            </div>
+
+
+            <div class="metric-value">
+
+                ${valor.toFixed(1)}
+
+            </div>
+
+
+            <div class="metric-unit">
+
+                ${unidade}
+
+            </div>
+
+
+            <div
+                class="metric-state"
+                style="color:${cor}"
+            >
+
+                ✓
+
+                <br>
+
+                ${estado}
+
+            </div>
+
+
+            <div class="scale">
+
+                <i
+                    class="marker"
+                    style="left:${posicao}%"
+                ></i>
+
+            </div>
+
+
+            <div class="scale-labels">
+
+                <span>0</span>
+
+                <span>${referencia}</span>
+
+                <span>${maximo}</span>
+
+            </div>
+
+        </div>
+    `;
+}
+
+
+// ======================================================
+// RENDERIZAÇÃO PRINCIPAL
+// ======================================================
+
 function renderizarDashboard(reading, analise) {
-    // 1. Score Card e Status Geral
-    document.getElementById('scoreCard').innerHTML = `
-        <h2 class="text-xl font-semibold text-slate-400 mb-2">Score de Qualidade</h2>
-        <div class="text-5xl font-black text-emerald-400">${analise.score}</div>
-        <p class="text-sm mt-2 font-medium">Status: <span class="text-amber-400">${analise.status}</span></p>
-    `;
 
-    // 2. Cards com os valores individuais dos Sensores
-    document.getElementById('cards').innerHTML = `
-        <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
-            <p class="text-slate-400 text-sm font-medium">Temperatura</p>
-            <p class="text-2xl font-bold mt-1">${reading.temperature?.toFixed(1) || 0}°C</p>
-        </div>
-        <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
-            <p class="text-slate-400 text-sm font-medium">Umidade</p>
-            <p class="text-2xl font-bold mt-1">${reading.humidity?.toFixed(1) || 0}%</p>
-        </div>
-        <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
-            <p class="text-slate-400 text-sm font-medium">CO₂</p>
-            <p class="text-2xl font-bold mt-1">${reading.co2 || 0} ppm</p>
-        </div>
-    `;
+    // --------------------------------------------------
+    // LEITURAS
+    // --------------------------------------------------
 
-    // 3. Alertas
-    const alertsHtml = analise.alerts.map(a => `<li class="text-red-400 font-semibold">⚠️ ${a}</li>`).join('') || '<li class="text-emerald-400">✅ Nenhum alerta ativo</li>';
-    document.getElementById('alertsCard').innerHTML = `
-        <h3 class="text-lg font-bold mb-3 text-red-500">Alertas Ativos</h3>
-        <ul class="space-y-2 text-sm">${alertsHtml}</ul>
-    `;
+    const temperatura = campo(
+        reading,
+        "temperature"
+    );
 
-    // 4. Diagnóstico (Status do Ambiente)
-    const diagnosisHtml = analise.diagnosis.map(d => `<li class="text-slate-300">📌 ${d}</li>`).join('') || '<li class="text-slate-400">Ambiente operando dentro dos conformes.</li>';
-    document.getElementById('environmentStatus').innerHTML = `
-        <h3 class="text-lg font-bold mb-3">Diagnóstico do Ambiente</h3>
-        <ul class="space-y-2 text-sm">${diagnosisHtml}</ul>
-    `;
+    const umidade = campo(
+        reading,
+        "humidity"
+    );
 
-    // 5. Mitigações (Ações Recomendadas)
-    const mitigationHtml = analise.mitigations.map(m => `<li class="text-slate-300">💡 ${m}</li>`).join('') || '<li class="text-slate-400">Nenhuma ação necessária.</li>';
-    document.getElementById('mitigationCard').innerHTML = `
-        <h3 class="text-lg font-bold mb-3 text-sky-400">Ações Recomendadas</h3>
-        <ul class="space-y-2 text-sm">${mitigationHtml}</ul>
-    `;
+    const co2 = campo(
+        reading,
+        "co2"
+    );
 
-    // 6. Informações do Dispositivo (Header)
-    document.getElementById('deviceInfo').innerHTML = `
-        <p class="text-xs text-slate-400">Dispositivo ID: <span class="font-mono text-white">${reading.device_id || 'Desconhecido'}</span></p>
-        <p class="text-xs text-slate-400 mt-1">Última atualização: <span class="text-white">${new Date(reading.created_at).toLocaleTimeString('pt-BR')}</span></p>
-    `;
+    const pm25 = campo(
+        reading,
+        "pm25",
+        "pm2_5"
+    );
+
+    const pm10 = campo(
+        reading,
+        "pm10"
+    );
+
+    const voc = campo(
+        reading,
+        "vocIndex",
+        "voc_index",
+        "voc"
+    );
+
+
+    // --------------------------------------------------
+    // TEMA
+    // --------------------------------------------------
+
+    const tema = statusTheme(
+        analise.status
+    );
+
+
+    // ==================================================
+    // PILARES
+    // ==================================================
+
+    let penalidadeConforto = 0;
+
+
+    // Temperatura ideal
+    if (
+        temperatura < 21 ||
+        temperatura > 24
+    ) {
+
+        penalidadeConforto += 12;
+    }
+
+
+    // Umidade ideal
+    if (
+        umidade < 40 ||
+        umidade > 60
+    ) {
+
+        penalidadeConforto += 13;
+    }
+
+
+    // Gases
+    const gases = limitar(
+
+        Math.round(
+
+            100 -
+
+            (
+                Math.max(
+                    0,
+                    co2 - 600
+                ) / 14
+            )
+
+            -
+
+            (
+                Math.max(
+                    0,
+                    voc - 100
+                ) / 5
+            )
+
+        ),
+
+        0,
+        100
+    );
+
+
+    // Poluentes
+    const poluentes = limitar(
+
+        Math.round(
+
+            100 -
+
+            (pm25 / 15) * 25 -
+
+            (pm10 / 45) * 15
+
+        ),
+
+        0,
+        100
+    );
+
+
+    // Conforto
+    const conforto = limitar(
+
+        100 -
+        penalidadeConforto * 2,
+
+        0,
+        100
+    );
+
+
+    // --------------------------------------------------
+    // EXIBIR PILARES
+    // --------------------------------------------------
+
+    const pillars =
+        document.getElementById("pillars");
+
+    if (pillars) {
+
+        pillars.innerHTML =
+
+            criarPilar(
+                "GASES",
+                gases,
+                "#62d90b"
+            )
+
+            +
+
+            criarPilar(
+                "POLUENTES",
+                poluentes,
+                "#12bfff"
+            )
+
+            +
+
+            criarPilar(
+                "CONFORTO",
+                conforto,
+                "#ff7a00"
+            );
+    }
+
+
+    // ==================================================
+    // AMBIENTE
+    // ==================================================
+
+    const ambiente =
+        document.getElementById(
+            "environmentMini"
+        );
+
+
+    if (ambiente) {
+
+        ambiente.innerHTML = `
+
+            <div>
+
+                <div class="env-value">
+
+                    ${temperatura.toFixed(1)}
+
+                    <small
+                        style="font-size:22px"
+                    >
+                        °C
+                    </small>
+
+                </div>
+
+                <div class="env-label">
+                    TEMPERATURA
+                </div>
+
+            </div>
+
+
+            <div>
+
+                <div class="env-value">
+
+                    ${umidade.toFixed(1)}
+
+                    <small
+                        style="font-size:22px"
+                    >
+                        %
+                    </small>
+
+                </div>
+
+                <div class="env-label">
+                    UMIDADE
+                </div>
+
+            </div>
+        `;
+    }
+
+
+    // ==================================================
+    // SCORE CENTRAL
+    // ==================================================
+
+    const scoreCard =
+        document.getElementById(
+            "scoreCard"
+        );
+
+
+    if (scoreCard) {
+
+        scoreCard.innerHTML = `
+
+            <div class="gauge">
+
+                <div class="gauge-ring"></div>
+
+
+                <div class="gauge-content">
+
+                    <div class="qai-label">
+                        QAI
+                    </div>
+
+
+                    <div
+                        class="score"
+                        style="
+                            color:${tema.cor}
+                        "
+                    >
+
+                        ${analise.score}
+
+                    </div>
+
+
+                    <div
+                        class="status-pill"
+                        style="
+                            background:${tema.fundo}
+                        "
+                    >
+
+                        ${analise.status}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="gauge-desc">
+
+                ${descricaoScore(
+                    analise.status
+                )}
+
+            </div>
+        `;
+    }
+
+
+    // ==================================================
+    // ALERTAS
+    // ==================================================
+
+    let alertas = analise.alerts || [];
+
+
+    if (alertas.length === 0) {
+
+        alertas = [
+            "Parâmetros monitorados dentro das faixas definidas."
+        ];
+    }
+
+
+    const alertsCard =
+        document.getElementById(
+            "alertsCard"
+        );
+
+
+    if (alertsCard) {
+
+        alertsCard.innerHTML = `
+
+            <div
+                class="alert-title"
+                style="
+                    color:${tema.cor}
+                "
+            >
+
+                ◉ &nbsp;
+                ${analise.status}
+
+            </div>
+
+
+            <div class="alert-text">
+
+                ${alertas
+                    .slice(0, 3)
+                    .join("<br>")}
+
+            </div>
+        `;
+    }
+
+
+    // ==================================================
+    // AÇÕES RECOMENDADAS
+    // ==================================================
+
+    let acoes =
+        analise.mitigations || [];
+
+
+    if (acoes.length === 0) {
+
+        acoes = [
+
+            "Mantenha as condições atuais e acompanhe as próximas leituras."
+
+        ];
+    }
+
+
+    const mitigationCard =
+        document.getElementById(
+            "mitigationCard"
+        );
+
+
+    if (mitigationCard) {
+
+        mitigationCard.innerHTML = `
+
+            <div class="section-title">
+
+                ◎ &nbsp;
+                AÇÕES RECOMENDADAS
+
+            </div>
+
+
+            <ul>
+
+                ${acoes
+                    .slice(0, 5)
+                    .map(
+                        acao =>
+                            `<li>${acao}</li>`
+                    )
+                    .join("")}
+
+            </ul>
+        `;
+    }
+
+
+    // ==================================================
+    // CARDS CO2 / PM2.5 / PM10
+    // ==================================================
+
+    const cards =
+        document.getElementById(
+            "cards"
+        );
+
+
+    if (cards) {
+
+        cards.innerHTML =
+
+
+            // CO2
+            criarCardSensor(
+
+                "CO₂",
+
+                co2,
+
+                "ppm",
+
+                2000,
+
+                800,
+
+                "#62d90b",
+
+                co2 <= 1000
+                    ? "ADEQUADO"
+                    : "ATENÇÃO"
+
+            )
+
+
+            +
+
+
+            // PM2.5
+            criarCardSensor(
+
+                "PM2.5",
+
+                pm25,
+
+                "µg/m³",
+
+                50,
+
+                15,
+
+                "#12bfff",
+
+                pm25 <= 15
+                    ? "BOM"
+                    : "ATENÇÃO"
+
+            )
+
+
+            +
+
+
+            // PM10
+            criarCardSensor(
+
+                "PM10",
+
+                pm10,
+
+                "µg/m³",
+
+                150,
+
+                45,
+
+                "#9b45ff",
+
+                pm10 <= 45
+                    ? "BOM"
+                    : "ATENÇÃO"
+
+            );
+    }
+
+
+    // ==================================================
+    // DATA / HORA
+    // ==================================================
+
+    const dataLeitura =
+        new Date(
+            reading.created_at
+        );
+
+
+    const deviceInfo =
+        document.getElementById(
+            "deviceInfo"
+        );
+
+
+    if (deviceInfo) {
+
+        deviceInfo.innerHTML = `
+
+            <div>
+
+                ${dataLeitura
+                    .toLocaleDateString(
+                        "pt-BR"
+                    )}
+
+            </div>
+
+
+            <div>
+
+                ${dataLeitura
+                    .toLocaleTimeString(
+                        "pt-BR"
+                    )}
+
+            </div>
+        `;
+    }
 }
