@@ -1,55 +1,1535 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QAI - Qualidade do Ar Interno</title>
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Supabase - carregado ANTES do script.js -->
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>QAI LIGHT - Qualidade do Ar Interno</title>
+
+
+    <!-- SUPABASE -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
+
+
     <style>
-        body { background: #0f172a; color: white; }
-        .card {
-            background: #1e293b;
-            border-radius: 16px;
-            padding: 20px;
-            border: 1px solid rgba(255,255,255,0.06);
+
+        /* =========================================================
+           VARIÁVEIS
+        ========================================================= */
+
+        :root {
+
+            --bg: #020b12;
+
+            --panel: #06131d;
+
+            --panel2: #081925;
+
+            --line: #17445a;
+
+            --cyan: #12bfff;
+
+            --green: #62d90b;
+
+            --yellow: #ffd400;
+
+            --orange: #ff7a00;
+
+            --red: #ff3038;
+
+            --purple: #9b45ff;
+
+            --muted: #a9bfd0;
+
+            --white: #f7fbff;
+
         }
+
+
+        /* =========================================================
+           RESET
+        ========================================================= */
+
+        * {
+
+            box-sizing: border-box;
+
+        }
+
+
+        body {
+
+            margin: 0;
+
+            min-height: 100vh;
+
+            color: var(--white);
+
+            font-family:
+                Inter,
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            background:
+
+                radial-gradient(
+                    circle at 50% 35%,
+                    rgba(0, 150, 210, 0.08),
+                    transparent 30%
+                ),
+
+                linear-gradient(
+                    180deg,
+                    #01080e,
+                    #03111a 55%,
+                    #020a10
+                );
+
+        }
+
+
+        /* =========================================================
+           CONTAINER
+        ========================================================= */
+
+        .shell {
+
+            width: 100%;
+
+            max-width: 1540px;
+
+            margin: auto;
+
+            padding: 14px;
+
+        }
+
+
+        /* =========================================================
+           PAINÉIS
+        ========================================================= */
+
+        .panel {
+
+            background:
+
+                linear-gradient(
+                    145deg,
+                    rgba(4, 18, 28, 0.98),
+                    rgba(4, 15, 23, 0.96)
+                );
+
+            border:
+
+                1px solid
+                rgba(45, 112, 143, 0.66);
+
+            border-radius: 20px;
+
+            box-shadow:
+
+                inset 0 0 26px
+                rgba(0, 0, 0, 0.18),
+
+                0 12px 32px
+                rgba(0, 0, 0, 0.15);
+
+        }
+
+
+        /* =========================================================
+           HEADER
+        ========================================================= */
+
+        .topbar {
+
+            min-height: 128px;
+
+            display: grid;
+
+            grid-template-columns:
+                290px
+                1fr
+                250px
+                270px;
+
+            align-items: center;
+
+            gap: 20px;
+
+            padding: 20px 26px;
+
+        }
+
+
+        /* =========================================================
+           LOGO
+        ========================================================= */
+
+        .brand {
+
+            font-size: 64px;
+
+            line-height: 0.9;
+
+            font-weight: 900;
+
+            letter-spacing: -4px;
+
+        }
+
+
+        .brand .leaf {
+
+            color: var(--green);
+
+            font-size: 36px;
+
+            vertical-align: top;
+
+            margin-left: 3px;
+
+        }
+
+
+        .brand small {
+
+            font-size: 22px;
+
+            color: var(--cyan);
+
+            letter-spacing: 0;
+
+            margin-left: 5px;
+
+        }
+
+
+        /* =========================================================
+           HEADER DIVISORES
+        ========================================================= */
+
+        .divider {
+
+            border-left:
+
+                1px solid
+                #547181;
+
+            padding-left: 26px;
+
+        }
+
+
+        .title {
+
+            font-size: 29px;
+
+            font-weight: 850;
+
+            letter-spacing: 1px;
+
+        }
+
+
+        .subtitle {
+
+            font-size: 20px;
+
+            color: #93afc3;
+
+            letter-spacing: 1px;
+
+            margin-top: 5px;
+
+        }
+
+
+        /* =========================================================
+           ONLINE
+        ========================================================= */
+
+        .online {
+
+            color: var(--green);
+
+            font-size: 27px;
+
+            font-weight: 850;
+
+        }
+
+
+        .signal {
+
+            font-size: 18px;
+
+            margin-top: 6px;
+
+            color: #d7e4ec;
+
+        }
+
+
+        /* =========================================================
+           DATA
+        ========================================================= */
+
+        .clock {
+
+            font-size: 24px;
+
+            line-height: 1.4;
+
+        }
+
+
+        /* =========================================================
+           GRID PRINCIPAL
+        ========================================================= */
+
+        .main {
+
+            display: grid;
+
+            grid-template-columns:
+                370px
+                1.15fr
+                1fr;
+
+            gap: 14px;
+
+            margin-top: 14px;
+
+        }
+
+
+        .leftcol {
+
+            display: grid;
+
+            gap: 14px;
+
+            grid-template-rows:
+                310px
+                190px;
+
+        }
+
+
+        .rightcol {
+
+            display: grid;
+
+            gap: 14px;
+
+            grid-template-rows:
+                210px
+                1fr;
+
+        }
+
+
+        .pad {
+
+            padding: 22px 25px;
+
+        }
+
+
+        /* =========================================================
+           TÍTULOS
+        ========================================================= */
+
+        .section-title {
+
+            color: var(--cyan);
+
+            font-size: 21px;
+
+            font-weight: 850;
+
+            letter-spacing: 0.5px;
+
+            margin-bottom: 18px;
+
+        }
+
+
+        /* =========================================================
+           PILARES
+        ========================================================= */
+
+        .pillar {
+
+            display: grid;
+
+            grid-template-columns:
+                1fr
+                70px;
+
+            align-items: center;
+
+            padding: 10px 0;
+
+            border-bottom:
+
+                1px solid
+                rgba(76, 117, 136, 0.5);
+
+        }
+
+
+        .pillar:last-child {
+
+            border-bottom: 0;
+
+        }
+
+
+        .pillar-name {
+
+            font-size: 18px;
+
+        }
+
+
+        .pillar-score {
+
+            font-size: 34px;
+
+            font-weight: 850;
+
+            text-align: right;
+
+        }
+
+
+        .bar {
+
+            height: 12px;
+
+            width: 168px;
+
+            margin-top: 8px;
+
+            background: #102b3a;
+
+            border-radius: 20px;
+
+            overflow: hidden;
+
+        }
+
+
+        .bar > i {
+
+            display: block;
+
+            height: 100%;
+
+            border-radius: 20px;
+
+        }
+
+
+        /* =========================================================
+           AMBIENTE
+        ========================================================= */
+
+        .env-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                1fr
+                1fr;
+
+            gap: 10px 18px;
+
+        }
+
+
+        .env-label {
+
+            font-size: 13px;
+
+            color: #b7cad7;
+
+            text-transform: uppercase;
+
+            margin-top: 5px;
+
+        }
+
+
+        .env-value {
+
+            font-size: 42px;
+
+            font-weight: 850;
+
+            line-height: 1;
+
+        }
+
+
+        /* =========================================================
+           VELOCÍMETRO
+        ========================================================= */
+
+        .gauge-panel {
+
+            position: relative;
+
+            min-height: 514px;
+
+            padding: 16px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            overflow: hidden;
+
+        }
+
+
+        .gauge-wrap {
+
+            width: min(100%, 590px);
+
+            text-align: center;
+
+        }
+
+
+        .gauge {
+
+            width: 520px;
+
+            max-width: 95%;
+
+            aspect-ratio: 2 / 1;
+
+            margin: 0 auto;
+
+            position: relative;
+
+            overflow: hidden;
+
+        }
+
+
+        /* ARCO */
+
+        .gauge-ring {
+
+            position: absolute;
+
+            left: 0;
+
+            right: 0;
+
+            top: 0;
+
+            margin: auto;
+
+            width: 100%;
+
+            aspect-ratio: 1 / 1;
+
+            border-radius: 50%;
+
+            background:
+
+                conic-gradient(
+
+                    from 270deg,
+
+                    #20c52c 0deg,
+
+                    #59dd10 45deg,
+
+                    #d8ed00 80deg,
+
+                    #ffd400 105deg,
+
+                    #ff9d00 135deg,
+
+                    #ff4b16 160deg,
+
+                    #ff172e 180deg,
+
+                    transparent 180deg,
+
+                    transparent 360deg
+
+                );
+
+            filter:
+
+                drop-shadow(
+                    0 0 10px
+                    rgba(255, 215, 0, 0.35)
+                );
+
+        }
+
+
+        /* INTERIOR DO VELOCÍMETRO */
+
+        .gauge-ring::after {
+
+            content: "";
+
+            position: absolute;
+
+            inset: 8%;
+
+            border-radius: 50%;
+
+            background:
+
+                radial-gradient(
+
+                    circle,
+
+                    #06131d 58%,
+
+                    #031019 72%
+
+                );
+
+        }
+
+
+        /* CONTEÚDO CENTRAL */
+
+        .gauge-content {
+
+            position: absolute;
+
+            left: 0;
+
+            right: 0;
+
+            top: 76px;
+
+            z-index: 2;
+
+            text-align: center;
+
+        }
+
+
+        .qai-label {
+
+            font-size: 34px;
+
+            font-weight: 850;
+
+        }
+
+
+        .score {
+
+            font-size: 145px;
+
+            line-height: 0.9;
+
+            font-weight: 950;
+
+            text-shadow:
+
+                0 5px 14px
+                #000;
+
+        }
+
+
+        .status-pill {
+
+            display: inline-block;
+
+            min-width: 260px;
+
+            padding:
+
+                8px
+                24px;
+
+            border-radius: 15px;
+
+            font-size: 32px;
+
+            font-weight: 950;
+
+            color: #071018;
+
+            margin-top: 8px;
+
+        }
+
+
+        .gauge-desc {
+
+            color: #a8c4d8;
+
+            font-size: 20px;
+
+            line-height: 1.4;
+
+            margin-top: 12px;
+
+        }
+
+
+        /* =========================================================
+           ALERTA
+        ========================================================= */
+
+        .alert-title {
+
+            font-size: 27px;
+
+            font-weight: 900;
+
+            margin-bottom: 12px;
+
+        }
+
+
+        .alert-text {
+
+            font-size: 19px;
+
+            line-height: 1.55;
+
+            color: #f1f5f9;
+
+        }
+
+
+        /* =========================================================
+           RECOMENDAÇÕES
+        ========================================================= */
+
+        .recommendations ul {
+
+            margin:
+
+                8px
+                0
+                0;
+
+            padding-left: 25px;
+
+        }
+
+
+        .recommendations li {
+
+            font-size: 18px;
+
+            line-height: 1.65;
+
+            padding-left: 4px;
+
+        }
+
+
+        .recommendations li::marker {
+
+            color: var(--cyan);
+
+        }
+
+
+        /* =========================================================
+           CARDS DOS SENSORES
+        ========================================================= */
+
+        .metrics {
+
+            display: grid;
+
+            grid-template-columns:
+                1fr
+                1fr
+                1fr;
+
+            gap: 14px;
+
+            margin-top: 14px;
+
+        }
+
+
+        .metric {
+
+            min-height: 202px;
+
+            padding: 20px 28px;
+
+            position: relative;
+
+        }
+
+
+        .metric-title {
+
+            font-size: 22px;
+
+            font-weight: 850;
+
+        }
+
+
+        .metric-value {
+
+            font-size: 60px;
+
+            font-weight: 900;
+
+            line-height: 1;
+
+            margin-top: 4px;
+
+        }
+
+
+        .metric-unit {
+
+            font-size: 18px;
+
+            color: #c5d4df;
+
+        }
+
+
+        .metric-state {
+
+            position: absolute;
+
+            right: 28px;
+
+            top: 48px;
+
+            font-size: 17px;
+
+            line-height: 1.7;
+
+            font-weight: 850;
+
+            text-align: center;
+
+        }
+
+
+        /* =========================================================
+           ESCALA DOS SENSORES
+        ========================================================= */
+
+        .scale {
+
+            position: absolute;
+
+            left: 28px;
+
+            right: 28px;
+
+            bottom: 37px;
+
+            height: 10px;
+
+            border-radius: 20px;
+
+            background:
+
+                linear-gradient(
+
+                    90deg,
+
+                    #35c719,
+
+                    #e7f10d 38%,
+
+                    #ffbd00 55%,
+
+                    #ff3b13 78%,
+
+                    #f50036
+
+                );
+
+        }
+
+
+        .marker {
+
+            position: absolute;
+
+            top: -10px;
+
+            width: 0;
+
+            height: 0;
+
+            border-left:
+
+                8px solid
+                transparent;
+
+            border-right:
+
+                8px solid
+                transparent;
+
+            border-top:
+
+                14px solid
+                white;
+
+            transform:
+
+                translateX(-50%);
+
+        }
+
+
+        .scale-labels {
+
+            position: absolute;
+
+            left: 28px;
+
+            right: 28px;
+
+            bottom: 10px;
+
+            display: flex;
+
+            justify-content: space-between;
+
+            color: #c6d5df;
+
+            font-size: 14px;
+
+        }
+
+
+        /* =========================================================
+           RODAPÉ
+        ========================================================= */
+
+        .footer {
+
+            margin-top: 14px;
+
+            min-height: 120px;
+
+            padding:
+
+                18px
+                30px;
+
+            display: grid;
+
+            grid-template-columns:
+
+                repeat(4, 1fr)
+                250px;
+
+            gap: 12px;
+
+            align-items: center;
+
+        }
+
+
+        .tip {
+
+            border-right:
+
+                1px solid
+                #426173;
+
+            padding:
+
+                0
+                18px;
+
+        }
+
+
+        .tip b {
+
+            display: block;
+
+            font-size: 18px;
+
+            margin-bottom: 6px;
+
+        }
+
+
+        .tip span {
+
+            font-size: 15px;
+
+            line-height: 1.45;
+
+            color: #c5d4df;
+
+        }
+
+
+        /* =========================================================
+           QR
+        ========================================================= */
+
+        .qr {
+
+            text-align: center;
+
+            font-size: 13px;
+
+            color: #b9cedb;
+
+        }
+
+
+        .qrbox {
+
+            display: inline-grid;
+
+            place-items: center;
+
+            width: 68px;
+
+            height: 68px;
+
+            margin-right: 10px;
+
+            background: white;
+
+            color: black;
+
+            font-weight: 900;
+
+            border-radius: 5px;
+
+        }
+
+
+        /* =========================================================
+           RESPONSIVO
+        ========================================================= */
+
+        @media(max-width: 1100px) {
+
+            .topbar {
+
+                grid-template-columns:
+                    1fr
+                    1fr;
+
+            }
+
+
+            .main {
+
+                grid-template-columns:
+                    1fr;
+
+            }
+
+
+            .leftcol,
+            .rightcol {
+
+                grid-template-rows:
+                    auto;
+
+            }
+
+
+            .metrics {
+
+                grid-template-columns:
+                    1fr;
+
+            }
+
+
+            .footer {
+
+                grid-template-columns:
+                    1fr
+                    1fr;
+
+            }
+
+
+            .gauge-panel {
+
+                min-height: 500px;
+
+            }
+
+        }
+
+
+        @media(max-width: 650px) {
+
+            .topbar {
+
+                grid-template-columns:
+                    1fr;
+
+            }
+
+
+            .divider {
+
+                border-left: 0;
+
+                padding-left: 0;
+
+            }
+
+
+            .brand {
+
+                font-size: 48px;
+
+            }
+
+
+            .title {
+
+                font-size: 22px;
+
+            }
+
+
+            .score {
+
+                font-size: 105px;
+
+            }
+
+
+            .footer {
+
+                grid-template-columns:
+                    1fr;
+
+            }
+
+
+            .tip {
+
+                border-right: 0;
+
+                border-bottom:
+
+                    1px solid
+                    #426173;
+
+                padding: 12px;
+
+            }
+
+        }
+
     </style>
+
 </head>
+
+
 <body>
-    <div class="max-w-7xl mx-auto p-6">
-        <!-- HEADER -->
-        <div class="flex flex-col lg:flex-row lg:justify-between lg:items-center mb-8">
-            <div>
-                <h1 class="text-3xl font-bold">QAI - Plataforma Inteligente</h1>
-                <p class="text-slate-400">Qualidade Ambiental Interna</p>
+
+
+<div class="shell">
+
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <header class="panel topbar">
+
+
+        <!-- LOGO -->
+
+        <div class="brand">
+
+            QAI
+
+            <span class="leaf">◆</span>
+
+            <small>LIGHT</small>
+
+        </div>
+
+
+        <!-- TÍTULO -->
+
+        <div class="divider">
+
+            <div class="title">
+
+                QUALIDADE DO AR INTERNO
+
             </div>
-            <div id="deviceInfo" class="card mt-4 lg:mt-0 min-w-[280px]"></div>
+
+            <div class="subtitle">
+
+                MONITORAMENTO INTELIGENTE
+
+            </div>
+
         </div>
 
-        <!-- TOPO -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
-            <div id="scoreCard" class="card"></div>
-            <div id="cards" class="lg:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+
+        <!-- ONLINE -->
+
+        <div class="divider">
+
+            <div class="online">
+
+                ◉ ONLINE
+
+            </div>
+
+            <div
+                class="signal"
+                id="signalInfo"
+            >
+
+                Monitor conectado
+
+            </div>
+
         </div>
 
-        <!-- CENTRO -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
-            <div id="environmentStatus" class="card"></div>
-            <div id="statusCard" class="card"></div>
+
+        <!-- DATA / HORA -->
+
+        <div
+            class="divider clock"
+            id="deviceInfo"
+        >
+
+            Carregando...
+
         </div>
 
-        <!-- BASE -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <div id="alertsCard" class="card"></div>
-            <div id="mitigationCard" class="card"></div>
-        </div>
-    </div>
 
-      <script src="analysis.js"></script>
-    <script src="script.js"></script>
+    </header>
+
+
+
+    <!-- =====================================================
+         ÁREA PRINCIPAL
+    ====================================================== -->
+
+    <section class="main">
+
+
+        <!-- =================================================
+             COLUNA ESQUERDA
+        ================================================== -->
+
+        <div class="leftcol">
+
+
+            <!-- PILARES -->
+
+            <div class="panel pad">
+
+                <div class="section-title">
+
+                    ▥ &nbsp; PILARES QAI
+
+                </div>
+
+
+                <div id="pillars">
+
+                    Carregando...
+
+                </div>
+
+            </div>
+
+
+
+            <!-- AMBIENTE -->
+
+            <div class="panel pad">
+
+                <div class="section-title">
+
+                    🌿 &nbsp; AMBIENTE
+
+                </div>
+
+
+                <div
+                    class="env-grid"
+                    id="environmentMini"
+                >
+
+                    Carregando...
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- =================================================
+             VELOCÍMETRO CENTRAL
+        ================================================== -->
+
+        <div class="panel gauge-panel">
+
+
+            <div
+                id="scoreCard"
+                class="gauge-wrap"
+            >
+
+                Carregando QAI...
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- =================================================
+             COLUNA DIREITA
+        ================================================== -->
+
+        <div class="rightcol">
+
+
+            <!-- ALERTAS -->
+
+            <div
+                id="alertsCard"
+                class="panel pad"
+            >
+
+                Carregando análise...
+
+            </div>
+
+
+
+            <!-- RECOMENDAÇÕES -->
+
+            <div
+                id="mitigationCard"
+                class="panel pad recommendations"
+            >
+
+                Carregando recomendações...
+
+            </div>
+
+
+        </div>
+
+
+    </section>
+
+
+
+    <!-- =====================================================
+         CO2 / PM2.5 / PM10
+    ====================================================== -->
+
+    <section
+        id="cards"
+        class="metrics"
+    >
+
+        Carregando sensores...
+
+    </section>
+
+
+
+    <!-- =====================================================
+         RODAPÉ
+    ====================================================== -->
+
+    <footer class="panel footer">
+
+
+        <!-- VENTILAÇÃO -->
+
+        <div class="tip">
+
+            <b style="color:var(--cyan)">
+
+                💨 VENTILE
+
+            </b>
+
+            <span>
+
+                MELHORE A<br>
+
+                RENOVAÇÃO DO AR
+
+            </span>
+
+        </div>
+
+
+
+        <!-- CONFORTO -->
+
+        <div class="tip">
+
+            <b style="color:var(--orange)">
+
+                🌡 CONFORTO
+
+            </b>
+
+            <span>
+
+                MANTENHA ENTRE<br>
+
+                21°C E 24°C
+
+            </span>
+
+        </div>
+
+
+
+        <!-- UMIDADE -->
+
+        <div class="tip">
+
+            <b style="color:var(--cyan)">
+
+                💧 UMIDADE
+
+            </b>
+
+            <span>
+
+                IDEAL ENTRE<br>
+
+                40% E 60%
+
+            </span>
+
+        </div>
+
+
+
+        <!-- FILTROS -->
+
+        <div class="tip">
+
+            <b style="color:var(--purple)">
+
+                ▦ FILTROS
+
+            </b>
+
+            <span>
+
+                VERIFIQUE E<br>
+
+                LIMPE OS FILTROS
+
+            </span>
+
+        </div>
+
+
+
+        <!-- MARCA -->
+
+        <div class="qr">
+
+            <span class="qrbox">
+
+                QR
+
+            </span>
+
+            <b>
+
+                QAI LIGHT
+
+            </b>
+
+            <br>
+
+            TECNOLOGIA QUE CUIDA DO SEU AR
+
+        </div>
+
+
+    </footer>
+
+
+
+    <!-- =====================================================
+         COMPATIBILIDADE COM O MOTOR ANTIGO
+    ====================================================== -->
+
+    <div
+        id="environmentStatus"
+        style="display:none"
+    ></div>
+
+
+    <div
+        id="statusCard"
+        style="display:none"
+    ></div>
+
+
+</div>
+
+
+
+<!-- =========================================================
+     SCRIPTS
+
+     IMPORTANTE:
+     analysis.js precisa carregar ANTES de script.js
+========================================================= -->
+
+<script src="analysis.js"></script>
+
+<script src="script.js"></script>
+
+
 </body>
+
 </html>
