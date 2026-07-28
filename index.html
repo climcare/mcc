@@ -290,6 +290,106 @@
         }
 
 
+
+        /* =====================================================
+           TEMA DIURNO / NOTURNO
+           No modo noturno, textos neutros/cinzentos ficam brancos.
+           Cores semafóricas (verde, azul, amarelo e vermelho)
+           permanecem preservadas.
+        ====================================================== */
+
+        html.dark body {
+            color: #ffffff;
+        }
+
+        html.dark .text-slate-200,
+        html.dark .text-slate-300,
+        html.dark .text-slate-400,
+        html.dark .text-slate-500,
+        html.dark .text-slate-600,
+        html.dark .text-slate-700,
+        html.dark .text-slate-800 {
+            color: #ffffff !important;
+        }
+
+        html.dark .qai-card {
+            background: rgba(8, 17, 31, 0.88);
+        }
+
+        /* Modo diurno */
+        html:not(.dark) body {
+            color: #0f172a;
+            background:
+                radial-gradient(
+                    circle at 50% 0%,
+                    rgba(14, 165, 233, 0.08),
+                    transparent 35%
+                ),
+                #eef4f8;
+        }
+
+        html:not(.dark) .qai-card {
+            background: rgba(255, 255, 255, 0.96);
+            border-color: rgba(148, 163, 184, 0.45);
+            box-shadow: 0 8px 25px rgba(15, 23, 42, 0.08);
+        }
+
+        html:not(.dark) .text-white,
+        html:not(.dark) .text-slate-100,
+        html:not(.dark) .text-slate-200,
+        html:not(.dark) .text-slate-300 {
+            color: #0f172a !important;
+        }
+
+        html:not(.dark) .text-slate-400,
+        html:not(.dark) .text-slate-500,
+        html:not(.dark) .text-slate-600 {
+            color: #475569 !important;
+        }
+
+        html:not(.dark) .bg-slate-950\/50,
+        html:not(.dark) .dark\:bg-slate-950,
+        html:not(.dark) .dark\:bg-slate-950\/40 {
+            background: rgba(241, 245, 249, 0.95) !important;
+        }
+
+        html:not(.dark) .bg-slate-800,
+        html:not(.dark) .dark\:bg-slate-800 {
+            background: #e2e8f0 !important;
+        }
+
+        html:not(.dark) .border-slate-800,
+        html:not(.dark) .dark\:border-slate-800,
+        html:not(.dark) .dark\:border-slate-800\/80 {
+            border-color: #cbd5e1 !important;
+        }
+
+        /* Botão de tema */
+        .theme-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            min-height: 34px;
+            padding: 7px 10px;
+            border-radius: 10px;
+            border: 1px solid rgba(51, 65, 85, 0.75);
+            background: rgba(15, 23, 42, 0.72);
+            color: #ffffff;
+            cursor: pointer;
+            transition: transform .2s ease, background .2s ease, border-color .2s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: translateY(-1px);
+            border-color: rgba(14, 165, 233, 0.55);
+        }
+
+        html:not(.dark) .theme-toggle {
+            background: #ffffff;
+            color: #0f172a;
+            border-color: #cbd5e1;
+        }
+
         /* =====================================================
            MOBILE
         ====================================================== */
@@ -480,7 +580,7 @@
                         class="
                             text-[10px]
                             sm:text-[11px]
-                            text-slate-500
+                            text-white
                             mt-1
                         "
                     >
@@ -558,6 +658,37 @@
                     --:--:--
 
                 </span>
+
+
+                <button
+                    id="btnAlternarTema"
+                    type="button"
+                    class="theme-toggle"
+                    aria-label="Alternar modo diurno e noturno"
+                    title="Alternar modo diurno e noturno"
+                >
+
+                    <span
+                        id="icoTema"
+                        class="text-sm leading-none"
+                    >
+                        ☀️
+                    </span>
+
+                    <span
+                        id="txtTema"
+                        class="
+                            text-[8px]
+                            sm:text-[9px]
+                            font-black
+                            uppercase
+                            tracking-wider
+                        "
+                    >
+                        MODO DIURNO
+                    </span>
+
+                </button>
 
 
                 <!-- COMPATIBILIDADE -->
@@ -1824,29 +1955,6 @@
 
 
 </div>
-
-
-
-<!-- =========================================================
-     BOTÃO DE TEMA OCULTO
-
-     Mantido porque seu script atual procura estes IDs.
-========================================================= -->
-
-<button
-    id="btnAlternarTema"
-    class="hidden"
-></button>
-
-<span
-    id="icoTema"
-    class="hidden"
-></span>
-
-<span
-    id="txtTema"
-    class="hidden"
-></span>
 
 
 
